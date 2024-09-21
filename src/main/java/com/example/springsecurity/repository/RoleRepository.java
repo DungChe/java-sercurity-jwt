@@ -1,4 +1,4 @@
-package com.example.springsecurity.reponsitory;
+package com.example.springsecurity.repository;
 
 import com.example.springsecurity.model.entity.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
