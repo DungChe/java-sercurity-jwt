@@ -10,6 +10,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 
@@ -23,7 +24,7 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
-
+    private String fullName;
     private String username;
     @Column(unique = true)
     private String email;
@@ -33,6 +34,8 @@ public class User implements UserDetails {
     @ManyToOne
     @JoinColumn(name = "Role_ID", nullable = false)
     private Role role;
+    private LocalDate createdDate;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
