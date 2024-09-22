@@ -3,7 +3,7 @@ package com.example.springsecurity.security;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.example.springsecurity.service.impl.UserDetailsServiceImpl;
+import com.example.springsecurity.service.Impl.UserDetailsServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -13,9 +13,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
-import java.util.Objects;
-
-import static org.springframework.security.config.Elements.JWT;
 
 @Component
 @RequiredArgsConstructor
@@ -24,7 +21,6 @@ public class JwtTokenProvider {
     private final JwtProperties jwtProperties;
     private final UserDetailsServiceImpl userDetailsService;
 
-    // Generate access token
     public String generateAccessToken(Authentication auth) {
         return JWT.create()
                 .withExpiresAt(Instant.now().plusMillis(jwtProperties.getAccessExpiresAt()))
@@ -42,7 +38,6 @@ public class JwtTokenProvider {
                 .sign(Algorithm.HMAC512(jwtProperties.getRefreshSecret()));
     }
 
-    // Validate access token
     public boolean validateAccessToken(String token) {
         try {
             DecodedJWT jwt = JWT.require(Algorithm.HMAC512(jwtProperties.getAccessSecret()))
@@ -71,7 +66,6 @@ public class JwtTokenProvider {
         }
     }
 
-    // Validate refresh token
     public boolean validateRefreshToken(String token) {
         try {
             JWT.require(Algorithm.HMAC512(jwtProperties.getRefreshSecret()))
@@ -94,7 +88,6 @@ public class JwtTokenProvider {
         return null;
     }
 
-    // Create an Authentication object from the token
     public Authentication createAuthentication(String token) {
         DecodedJWT jwt = JWT.decode(token);
         String username = jwt.getSubject();
