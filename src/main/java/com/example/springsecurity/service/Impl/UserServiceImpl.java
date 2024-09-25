@@ -27,44 +27,38 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDto> getAll() {
         return userRepository.findAll().stream()
-                .map(this::convertToDto)
+                .map(UserDto::from) // Sử dụng UserDto.from(user)
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<UserDto> searchUser(String query) {
         List<User> users = userRepository.searchUsersByFullNameOrEmail(query);
-        return users.stream().
-                map(this::convertToDto)
+        return users.stream()
+                .map(UserDto::from) // Sử dụng UserDto.from(user)
                 .collect(Collectors.toList());
     }
-
-
 
     @Override
     public UserDto getById(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        return convertToDto(user);
+        return UserDto.from(user); // Sử dụng UserDto.from(user)
     }
 
     @Override
     public String changePassword(ChangePasswordForm request, Principal connectedUser) {
-        // Tìm người dùng dựa trên email của người dùng hiện tại
         User user = userRepository.findByEmail(connectedUser.getName())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        // Kiểm tra mật khẩu hiện tại có đúng không
         if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
             return "Current password is incorrect";
         }
 
-        // Kiểm tra mật khẩu mới và xác nhận mật khẩu có khớp nhau không
-        if (!request.getNewPassword().equals( request.getConfirmPassword()) ) {
+        if (!request.getNewPassword().equals(request.getConfirmPassword())) {
             return "New password and confirm password do not match";
         }
 
-        // Cập nhật mật khẩu mới
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
         return "Password changed successfully";
@@ -76,8 +70,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         user.setFullName(form.getFullName());
-//        user.setProfilePicture(form.getProfilePicture());  // Cập nhật profilePicture
-        // set other fields from form if needed
+        user.setProfilePicture(form.getProfilePicture());
 
         userRepository.save(user);
         return "User updated successfully";
@@ -96,7 +89,7 @@ public class UserServiceImpl implements UserService {
     public UserDto getMe(Principal principal) {
         User user = userRepository.findByEmail(principal.getName())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        return convertToDto(user);
+        return UserDto.from(user); // Sử dụng UserDto.from(user)
     }
 
     @Override
@@ -105,20 +98,9 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         user.setFullName(form.getFullName());
-//        user.setProfilePicture(form.getProfilePicture());  // Cập nhật profilePicture
-        // set other fields from form if needed
+        user.setProfilePicture(form.getProfilePicture());
 
         userRepository.save(user);
         return "User updated successfully";
-    }
-
-    private UserDto convertToDto(User user) {
-        return UserDto.builder()
-                .id(user.getId())
-                .fullName(user.getFullName())
-                .email(user.getEmail())
-//                .profilePicture(user.getProfilePicture())  // Thêm profilePicture
-                // set other fields if needed
-                .build();
     }
 }

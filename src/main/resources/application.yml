@@ -1,0 +1,9 @@
+app:
+  security:
+    jwt:
+      accessSecret: yourAccessSecret
+      refreshSecret: yourRefreshSecret
+      prefix: Bearer
+      authHeader: Authorization
+      accessExpiresAt: 3600000 # 1 hour in milliseconds
+      refreshExpiresAt: 86400000 # 1 day in milliseconds

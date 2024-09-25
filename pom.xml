@@ -25,6 +25,12 @@
 			<artifactId>java-jwt</artifactId>
 			<version>4.0.0</version> <!-- Hoặc phiên bản mới nhất -->
 		</dependency>
+		<!-- Dependencies for db -->
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>42.2.20</version> <!-- hoặc phiên bản mới nhất -->
+		</dependency>
 
 		<dependency>
 			<groupId>javax.servlet</groupId>
