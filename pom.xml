@@ -29,9 +29,8 @@
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>42.2.20</version> <!-- hoặc phiên bản mới nhất -->
+			<version>42.7.2</version> <!-- Hoặc một phiên bản mới hơn -->
 		</dependency>
-
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
