@@ -1,6 +1,5 @@
 package com.example.springsecurity.model.entity;
 
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,18 +23,25 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
+
     private String fullName;
     private String username;
+
     @Column(unique = true)
     private String email;
+
     @Column(nullable = false)
     private String password;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "Role_ID", nullable = false)
     private Role role;
+
     private LocalDate createdDate;
-    private String status;
+
+    @Column(nullable = false)
+    private String status = "ACTIVE";
+
     private String profilePicture;
 
     @Override
@@ -49,7 +55,7 @@ public class User implements UserDetails {
     }
 
     @Override
-    public String getUsername() {return username;}
+    public String getUsername() { return username; }
 
     @Override
     public boolean isAccountNonExpired() {
@@ -62,7 +68,7 @@ public class User implements UserDetails {
     }
 
     @Override
-    public boolean isCredentialsNonExpired() {return true;}
+    public boolean isCredentialsNonExpired() { return true; }
 
     public Long getId() {
         return userId;
