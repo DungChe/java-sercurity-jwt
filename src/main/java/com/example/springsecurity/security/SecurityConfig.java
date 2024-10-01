@@ -30,9 +30,9 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/v1/auth/**"
                         ).permitAll()
-                        .requestMatchers("/api/v1/admin/**").hasAuthority("ROLE_ADMIN")
-
-                        .anyRequest().authenticated()
+//                        .requestMatchers("/api/orders/**").hasAnyAuthority("CUSTOMER", "MANAGER", "CONSULTING_STAFF")
+                                .requestMatchers("/api/v1/admin/**").hasAuthority("ROLE_ADMIN")
+                                .anyRequest().authenticated()
                 )
                 .userDetailsService(userDetailsService)
                 .sessionManagement(session -> session
