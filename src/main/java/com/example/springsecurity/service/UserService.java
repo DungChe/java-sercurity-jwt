@@ -16,4 +16,5 @@ public interface UserService {
     String delete(Long id);
     UserDto getMe(Principal principal);
     String updateMe(Principal principal, UserForm form);
+
 }
