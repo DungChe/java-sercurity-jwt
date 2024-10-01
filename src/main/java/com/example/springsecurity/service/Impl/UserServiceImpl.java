@@ -4,6 +4,7 @@ import com.example.springsecurity.model.dto.UserDto;
 import com.example.springsecurity.model.entity.User;
 import com.example.springsecurity.model.payload.ChangePasswordForm;
 import com.example.springsecurity.model.payload.UserForm;
+import com.example.springsecurity.repository.OrderRepository;
 import com.example.springsecurity.repository.UserRepository;
 import com.example.springsecurity.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private OrderRepository orderRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -75,23 +79,6 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
         return "User updated successfully";
     }
-
-    @Override
-    public String delete(Long id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-
-        userRepository.delete(user);
-        return "User deleted successfully";
-    }
-
-    @Override
-    public UserDto getMe(Principal principal) {
-        User user = userRepository.findByEmail(principal.getName())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        return UserDto.from(user); // Sử dụng UserDto.from(user)
-    }
-
     @Override
     public String updateMe(Principal principal, UserForm form) {
         User user = userRepository.findByEmail(principal.getName())
@@ -103,4 +90,24 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
         return "User updated successfully";
     }
+
+    @Override
+    public String delete(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        user.setStatus("DELETED");
+        userRepository.save(user);
+        return "User marked as deleted successfully";
+    }
+
+    @Override
+    public UserDto getMe(Principal principal) {
+        User user = userRepository.findByEmail(principal.getName())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        return UserDto.from(user); // Sử dụng UserDto.from(user)
+    }
+
+
+
 }
