@@ -20,8 +20,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
-
 @Service
 @RequiredArgsConstructor
 @Log4j2
@@ -37,6 +35,14 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthDto login(SignInForm form) {
+        // Kiểm tra xem người dùng có tồn tại không
+        User user = userRepository.findByEmail(form.getEmail())
+                .orElseThrow(() -> new IllegalArgumentException("User not found with email: " + form.getEmail()));
+
+        if (!user.getStatus().equals("ACTIVE")) {
+            throw new IllegalArgumentException("Account is not active");
+        }
+        // Thực hiện xác thực
         Authentication authentication;
         try {
             authentication = authenticationManager.authenticate(
@@ -51,9 +57,6 @@ public class AuthServiceImpl implements AuthService {
         String accessToken = jwtTokenProvider.generateAccessToken(authentication);
         String refreshToken = jwtTokenProvider.generateRefreshToken(authentication);
 
-        User user = userRepository.findByEmail(form.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("User not found with email: " + form.getEmail()));
-
         log.info("User {} logged in successfully", user.getEmail());
 
         // Xác định trạng thái và thông điệp kết quả
@@ -62,6 +65,8 @@ public class AuthServiceImpl implements AuthService {
 
         return AuthDto.from(user, accessToken, refreshToken, status, result);
     }
+
+
 
     @Override
     public String register(SignUpForm form) {
@@ -72,17 +77,20 @@ public class AuthServiceImpl implements AuthService {
         Role role = roleRepository.findByName("ROLE_USER")
                 .orElseThrow(() -> new IllegalArgumentException("Not found role ROLE_USER"));
 
+        // Tạo đối tượng User mà không cần chỉ định status
         User user = User.builder()
                 .fullName(form.getFullName())
                 .email(form.getEmail())
                 .password(passwordEncoder.encode(form.getPassword()))
                 .role(role)
-                .build();
+                .build(); // Không cần thêm .status("ACTIVE")
 
         userRepository.save(user);
         log.info("User {} registered", user.getUsername());
         return "Success register new user";
     }
+
+
 
     @Override
     public AuthDto refreshJWT(String refreshToken) {
