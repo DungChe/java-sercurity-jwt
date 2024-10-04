@@ -1,5 +1,6 @@
 package com.example.springsecurity.service.Impl;
 
+import com.example.springsecurity.exception.EmailAlreadyExistsException;
 import com.example.springsecurity.exception.InvalidRefreshTokenException;
 import com.example.springsecurity.model.dto.AuthDto;
 import com.example.springsecurity.model.entity.Role;
@@ -13,12 +14,15 @@ import com.example.springsecurity.security.JwtTokenProvider;
 import com.example.springsecurity.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +34,7 @@ public class AuthServiceImpl implements AuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
-
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
 
     @Override
@@ -70,24 +74,35 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public String register(SignUpForm form) {
+        // Kiểm tra xem email đã tồn tại chưa
         if (userRepository.existsByEmail(form.getEmail())) {
-            throw new IllegalArgumentException("Email already exists");
+            throw new EmailAlreadyExistsException("Email already exists");
         }
 
+        // Tìm kiếm vai trò ROLE_USER
         Role role = roleRepository.findByName("ROLE_USER")
                 .orElseThrow(() -> new IllegalArgumentException("Not found role ROLE_USER"));
 
-        // Tạo đối tượng User mà không cần chỉ định status
+        // Tạo đối tượng User
         User user = User.builder()
                 .fullName(form.getFullName())
                 .email(form.getEmail())
                 .password(passwordEncoder.encode(form.getPassword()))
                 .role(role)
-                .build(); // Không cần thêm .status("ACTIVE")
+                .status("INACTIVE") // Đặt trạng thái là "INACTIVE" cho đến khi xác thực email
+                .build();
 
+        // Lưu người dùng vào cơ sở dữ liệu
         userRepository.save(user);
-        log.info("User {} registered", user.getUsername());
-        return "Success register new user";
+        log.info("User {} registered", user.getEmail());
+
+        // Tạo mã xác thực
+        String verificationCode = UUID.randomUUID().toString();
+
+        // Gửi thông điệp đến Kafka để gửi email xác nhận
+        kafkaTemplate.send("confirm-account-topic", String.format("email=%s,id=%s,code=%s", user.getEmail(), user.getId(), verificationCode));
+
+        return "Success register new user. Please check your email for confirmation.";
     }
 
 
