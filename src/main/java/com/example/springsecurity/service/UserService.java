@@ -17,4 +17,5 @@ public interface UserService {
     UserDto getMe(Principal principal);
     String updateMe(Principal principal, UserForm form);
 
+    String confirmUser(int userId, String verifyCode);
 }
