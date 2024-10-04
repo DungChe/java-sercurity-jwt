@@ -4,10 +4,10 @@ import com.example.springsecurity.model.dto.UserDto;
 import com.example.springsecurity.model.entity.User;
 import com.example.springsecurity.model.payload.ChangePasswordForm;
 import com.example.springsecurity.model.payload.UserForm;
-import com.example.springsecurity.repository.OrderRepository;
 import com.example.springsecurity.repository.UserRepository;
 import com.example.springsecurity.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,9 +21,6 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private OrderRepository orderRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -41,6 +38,11 @@ public class UserServiceImpl implements UserService {
         return users.stream()
                 .map(UserDto::from) // Sử dụng UserDto.from(user)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public String confirmUser(int userId, String verifyCode) {
+        return "Confirmed!";
     }
 
     @Override
