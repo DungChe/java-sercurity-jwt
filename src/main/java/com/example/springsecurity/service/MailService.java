@@ -125,7 +125,7 @@ public class MailService {
         properties.put("linkConfirm", linkConfirm);
         context.setVariables(properties);
 
-        helper.setFrom(emailFrom, "Lê Minh Phúc - đẹp troai ");
+        helper.setFrom(emailFrom, "Lê Minh Phúc CN22G ");
         helper.setTo(emailTo);
         helper.setSubject("Please confirm your account");
         String html = templateEngine.process("confirm-email.html", context);
