@@ -19,6 +19,7 @@
 	</properties>
 
 	<dependencies>
+		<!-- validator -->
 		<dependency>
 			<groupId>org.hibernate.validator</groupId>
 			<artifactId>hibernate-validator</artifactId>
@@ -38,7 +39,7 @@
 		<dependency>
 			<groupId>com.auth0</groupId>
 			<artifactId>java-jwt</artifactId>
-			<version>4.0.0</version> <!-- Hoặc phiên bản mới nhất -->
+			<version>4.0.0</version>
 		</dependency>
 		<!-- Dependencies for db -->
 		<dependency>
