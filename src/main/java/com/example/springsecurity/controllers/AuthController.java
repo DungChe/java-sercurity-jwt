@@ -22,5 +22,6 @@ public class AuthController {
     public ResponseEntity<String> register(@RequestBody  SignUpForm form){return ResponseEntity.ok(authService.register(form));}
 
     @GetMapping("/refresh")
+
     public ResponseEntity refreshToken(@RequestHeader("X-Refresh-Token") String refreshToken){return ResponseEntity.ok(authService.refreshJWT(refreshToken));}
 }
