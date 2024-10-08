@@ -74,11 +74,10 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public String register(SignUpForm form) {
-        // Kiểm tra xem email đã tồn tại chưa
         if (userRepository.existsByEmail(form.getEmail())) {
             throw new EmailAlreadyExistsException("Email already exists");
         }
-        // Tìm kiếm vai trò ROLE_USER
+
         Role role = roleRepository.findByName("ROLE_USER")
                 .orElseThrow(() -> new IllegalArgumentException("Not found role ROLE_USER"));
         // Tạo đối tượng User
