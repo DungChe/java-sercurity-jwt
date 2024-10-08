@@ -25,7 +25,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
-        // Lấy JWT từ request
+        // Lấy JWT từ request.
         String jwt = jwtTokenProvider.getJwtFromRequest(request);
 
         // Nếu JWT không null và hợp lệ
