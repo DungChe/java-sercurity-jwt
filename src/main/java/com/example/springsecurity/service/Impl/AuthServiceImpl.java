@@ -78,11 +78,9 @@ public class AuthServiceImpl implements AuthService {
         if (userRepository.existsByEmail(form.getEmail())) {
             throw new EmailAlreadyExistsException("Email already exists");
         }
-
         // Tìm kiếm vai trò ROLE_USER
         Role role = roleRepository.findByName("ROLE_USER")
                 .orElseThrow(() -> new IllegalArgumentException("Not found role ROLE_USER"));
-
         // Tạo đối tượng User
         User user = User.builder()
                 .fullName(form.getFullName())

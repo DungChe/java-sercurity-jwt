@@ -18,7 +18,7 @@ import java.security.Principal;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/user")
+@RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
 @Validated // Đảm bảo rằng các tham số có thể được kiểm tra tính hợp lệ
 public class UserController {

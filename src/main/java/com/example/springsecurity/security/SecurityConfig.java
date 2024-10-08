@@ -28,11 +28,12 @@ public class SecurityConfig {
                 .csrf().disable()
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                         .requestMatchers(
-                                "/api/v1/auth/**"
+                                "/api/v1/auth/**",
+                                "/api/v1/users/confirm/**"
                         ).permitAll()
 //                        .requestMatchers("/api/orders/**").hasAnyAuthority("CUSTOMER", "MANAGER", "CONSULTING_STAFF")
-                                .requestMatchers("/api/v1/admin/**").hasAuthority("ROLE_ADMIN")
-                                .anyRequest().authenticated()
+                        .requestMatchers("/api/v1/admin/**").hasAuthority("ROLE_ADMIN")
+                        .anyRequest().authenticated()
                 )
                 .userDetailsService(userDetailsService)
                 .sessionManagement(session -> session
