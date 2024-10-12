@@ -1,6 +1,7 @@
 package com.example.springsecurity.model.dto;
 
 import com.example.springsecurity.model.entity.Order;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,7 +17,9 @@ public class OrderDto {
     private Long orderId;
     private String designDetails;
     private String serviceType;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate startDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate endDate;
     private String status;
 
