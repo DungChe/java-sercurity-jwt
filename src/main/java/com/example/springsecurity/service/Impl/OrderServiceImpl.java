@@ -4,7 +4,8 @@ import com.example.springsecurity.exception.ResourceNotFoundException;
 import com.example.springsecurity.model.dto.OrderDto;
 import com.example.springsecurity.model.entity.Order;
 import com.example.springsecurity.model.entity.User;
-import com.example.springsecurity.model.payload.OrderForm;
+import com.example.springsecurity.model.payload.request.ChangeStatusOrderForm;
+import com.example.springsecurity.model.payload.request.OrderForm;
 import com.example.springsecurity.repository.OrderRepository;
 import com.example.springsecurity.repository.UserRepository;
 import com.example.springsecurity.service.OrderService;
@@ -66,10 +67,43 @@ public class OrderServiceImpl implements OrderService {
         existingOrder.setServiceType(orderForm.getServiceType());
         existingOrder.setStartDate(orderForm.getStartDate());
         existingOrder.setEndDate(orderForm.getEndDate());
-        existingOrder.setStatus(orderForm.getStatus());
 
         Order updatedOrder = orderRepository.save(existingOrder);
         return OrderDto.from(updatedOrder);
+    }
+    @Override
+    public String changeStatusOrder(Long orderID, ChangeStatusOrderForm form){
+        Order existingOrder = orderRepository.findById(orderID)
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+
+        existingOrder.setStatus(form.getStatus());
+
+        Order updateOrder = orderRepository.save(existingOrder);
+        return "Change successfully";
+    }
+
+    @Override
+    public String cancelOrder(Long orderId){
+        // Lấy thông tin người dùng hiện tại từ SecurityContextHolder
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName(); // Lấy email người dùng
+
+        User currentUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
+
+        // kiem tra co dom hang do ton tai hay khong
+        Order existOrder = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+        // kiem tra don hang co phai cua user do khong
+        Order orderAndUser = orderRepository.findByOrderIdAndUserId(existOrder.getOrderId(), currentUser.getUserId())
+                        .orElseThrow(()-> new ResourceNotFoundException("User don't have order"));
+        // kiem tra don hang khac trang thai da huy
+
+
+        existOrder.setStatus("CANCELED");
+
+        Order updateOrder = orderRepository.save(existOrder);
+        return "Canceled successfully";
     }
 
     @Override
@@ -81,18 +115,8 @@ public class OrderServiceImpl implements OrderService {
         existingOrder.setServiceType(orderForm.getServiceType());
         existingOrder.setStartDate(orderForm.getStartDate());
         existingOrder.setEndDate(orderForm.getEndDate());
-        // Không cập nhật status, giữ nguyên giá trị cũ
+        // Không cập nhật status
 
-        Order updatedOrder = orderRepository.save(existingOrder);
-        return OrderDto.from(updatedOrder);
-    }
-
-    @Override
-    public OrderDto cancelOrder(Long orderId) {
-        Order existingOrder = orderRepository.findById(orderId)
-                .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
-
-        existingOrder.setStatus("CANCELED");
         Order updatedOrder = orderRepository.save(existingOrder);
         return OrderDto.from(updatedOrder);
     }
