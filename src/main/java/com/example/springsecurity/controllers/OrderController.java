@@ -1,7 +1,7 @@
 package com.example.springsecurity.controllers;
 
 import com.example.springsecurity.model.dto.OrderDto;
-import com.example.springsecurity.model.payload.OrderForm;
+import com.example.springsecurity.model.payload.request.OrderForm;
 import com.example.springsecurity.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -30,12 +30,9 @@ public class OrderController {
         return ResponseEntity.ok(updatedOrder);
     }
 
-    // Hủy đơn hàng
+     // Hủy đơn hàng
     @DeleteMapping("/cancel/{orderId}")
-    public ResponseEntity<Void> cancelOrder(@PathVariable Long orderId) {
-        orderService.cancelOrder(orderId);
-        return ResponseEntity.noContent().build();
-    }
+    public ResponseEntity<String> cancelOrder(@PathVariable Long orderId) {return ResponseEntity.ok(orderService.cancelOrder(orderId));}
 
     // User xem chi tiết đơn hàng của họ
     @GetMapping("/user/my-orders/{orderId}")
