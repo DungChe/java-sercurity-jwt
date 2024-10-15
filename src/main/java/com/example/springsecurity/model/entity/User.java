@@ -24,11 +24,11 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
-    private String fullName;
     private String username;
-
     @Column(unique = true)
     private String email;
+    private String phone;
+    private String address;
 
     @Column(nullable = false)
     private String password;
@@ -38,6 +38,7 @@ public class User implements UserDetails {
     private Role role;
 
     private LocalDate createdDate;
+    private LocalDate dob;
 
     @Column(nullable = false)
     private String status = "ACTIVE";
