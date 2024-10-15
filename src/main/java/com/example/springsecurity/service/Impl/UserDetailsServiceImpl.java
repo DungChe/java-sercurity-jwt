@@ -21,7 +21,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .orElseThrow(() ->
                         new UsernameNotFoundException("User not found with email: " + email));
 
-        // Trả về một đối tượng UserDetails từ Spring Security
+        // Trả về một đối tượng UserDetails từ Spring Security( bo trong ma JWT)
         return org.springframework.security.core.userdetails.User.builder()
                 .username(user.getEmail())
                 .password(user.getPassword())
