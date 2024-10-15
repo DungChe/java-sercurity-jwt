@@ -1,4 +1,4 @@
-package com.example.springsecurity.model.payload;
+package com.example.springsecurity.model.payload.response;
 
 
 public class ResponseError<T> extends ResponseData<T> {
