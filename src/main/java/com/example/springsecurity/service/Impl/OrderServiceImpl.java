@@ -1,174 +1,204 @@
 package com.example.springsecurity.service.Impl;
 
-import com.example.springsecurity.exception.ResourceNotFoundException;
 import com.example.springsecurity.model.dto.OrderDto;
 import com.example.springsecurity.model.entity.Order;
 import com.example.springsecurity.model.entity.User;
 import com.example.springsecurity.model.payload.request.ChangeStatusOrderForm;
 import com.example.springsecurity.model.payload.request.OrderForm;
+import com.example.springsecurity.model.payload.response.ResponseData;
+import com.example.springsecurity.model.payload.response.ResponseError;
 import com.example.springsecurity.repository.OrderRepository;
 import com.example.springsecurity.repository.UserRepository;
 import com.example.springsecurity.service.OrderService;
-import com.example.springsecurity.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
 public class OrderServiceImpl implements OrderService {
+
     @Autowired
     private OrderRepository orderRepository;
 
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private UserService userService;
-
     @Override
-    public OrderDto placeOrder(OrderForm orderForm) {
-        // Lấy thông tin xác thực từ SecurityContextHolder (người dùng hiện tại)
+    public ResponseData<OrderDto> createOrder(OrderForm orderForm) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName(); // Lấy email người dùng
+        String email = authentication.getName();
 
-        User currentUser = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
+        User currentUser = userRepository.findByEmail(email).orElse(null);
+        if (currentUser == null) {
+            return new ResponseError<>(400, "User not found with email: " + email);
+        }
 
-        // Tạo đối tượng Order mới
         Order order = new Order();
+        order.setTitle("Thông tin đơn hàng");
         order.setDesignDetails(orderForm.getDesignDetails());
+        order.setOrderNumber(UUID.randomUUID().toString().substring(0, 8).toUpperCase());
         order.setServiceType(orderForm.getServiceType());
         order.setStartDate(orderForm.getStartDate());
         order.setEndDate(orderForm.getEndDate());
-        order.setStatus("PENDING");
+        order.setAddress(orderForm.getAddress());
+        order.setStatus(Order.Status.PENDING);
 
-        // Gán người dùng hiện tại cho đơn hàng
         order.setUser(currentUser);
-
-        // Lưu đơn hàng vào cơ sở dữ liệu
         Order savedOrder = orderRepository.save(order);
-
-        // Chuyển đổi Order thành OrderDto và trả về
-        return OrderDto.from(savedOrder);
-    }
-
-    // admin cập nhật đơn hàng
-    @Override
-    public OrderDto updateOrder(Long orderId, OrderForm orderForm) {
-        Order existingOrder = orderRepository.findById(orderId)
-                .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
-
-        existingOrder.setDesignDetails(orderForm.getDesignDetails());
-        existingOrder.setServiceType(orderForm.getServiceType());
-        existingOrder.setStartDate(orderForm.getStartDate());
-        existingOrder.setEndDate(orderForm.getEndDate());
-
-        Order updatedOrder = orderRepository.save(existingOrder);
-        return OrderDto.from(updatedOrder);
-    }
-    @Override
-    public String changeStatusOrder(Long orderID, ChangeStatusOrderForm form){
-        Order existingOrder = orderRepository.findById(orderID)
-                .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
-
-        existingOrder.setStatus(form.getStatus());
-
-        Order updateOrder = orderRepository.save(existingOrder);
-        return "Change successfully";
+        return new ResponseData<>(200, "Order created successfully", OrderDto.from(savedOrder));
     }
 
     @Override
-    public String cancelOrder(Long orderId){
-        // Lấy thông tin người dùng hiện tại từ SecurityContextHolder
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName(); // Lấy email người dùng
-
-        User currentUser = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
-
-        // kiem tra co dom hang do ton tai hay khong
-        Order existOrder = orderRepository.findById(orderId)
-                .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
-        // kiem tra don hang co phai cua user do khong
-        Order orderAndUser = orderRepository.findByOrderIdAndUserId(existOrder.getOrderId(), currentUser.getUserId())
-                        .orElseThrow(()-> new ResourceNotFoundException("User don't have order"));
-        // kiem tra don hang khac trang thai da huy
-
-
-        existOrder.setStatus("CANCELED");
-
-        Order updateOrder = orderRepository.save(existOrder);
-        return "Canceled successfully";
-    }
-
-    @Override
-    public OrderDto updateOrderForUser(Long orderId, OrderForm orderForm) {
-        Order existingOrder = orderRepository.findById(orderId)
-                .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
-
-        existingOrder.setDesignDetails(orderForm.getDesignDetails());
-        existingOrder.setServiceType(orderForm.getServiceType());
-        existingOrder.setStartDate(orderForm.getStartDate());
-        existingOrder.setEndDate(orderForm.getEndDate());
-        // Không cập nhật status
-
-        Order updatedOrder = orderRepository.save(existingOrder);
-        return OrderDto.from(updatedOrder);
-    }
-
-    // Quản li don hàng (admin)
-    @Override
-    public List<OrderDto> getAll() {
-        return orderRepository.findAll().stream()
-                .map(OrderDto::from)
-                .collect(Collectors.toList());
-    }
-    // Xem gio hàng của người dùng hiện tại
-    @Override
-    public List<OrderDto> getMyOrder() {
-        // Lấy thông tin người dùng hiện tại từ SecurityContextHolder
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName(); // Lấy email người dùng
-
-        User currentUser = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
-
-        return orderRepository.findByUser(currentUser).stream()
-                .map(OrderDto::from)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public OrderDto getOrderDetailsForAdmin(Long orderId) {
-        // Lấy đơn hàng dựa trên ID mà không cần kiểm tra người dùng
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new ResourceNotFoundException("Order not found with id: " + orderId));
-
-        return OrderDto.from(order);  // Chuyển đổi thành DTO để trả về
-    }
-
-    @Override
-    public OrderDto getOrderDetailsForUser(Long orderId) {
-        // Lấy đơn hàng dựa trên ID
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new ResourceNotFoundException("Order not found with id: " + orderId));
-
-        // Kiểm tra xem đơn hàng có thuộc về người dùng hiện tại không
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();  // Lấy email của người dùng đang đăng nhập
-
-        // Kiểm tra xem đơn hàng này có thuộc về người dùng hiện tại không
-        if (!order.getUser().getEmail().equals(email)) {
-            throw new AccessDeniedException("You do not have access to this order");
+    public ResponseData<OrderDto> updateOrder(Long orderId, OrderForm orderForm) {
+        Order existingOrder = orderRepository.findById(orderId).orElse(null);
+        if (existingOrder == null) {
+            return new ResponseError<>(404, "Order not found");
         }
 
-        return OrderDto.from(order);  // Chuyển đổi thành DTO để trả về
+        existingOrder.setDesignDetails(orderForm.getDesignDetails());
+        existingOrder.setServiceType(orderForm.getServiceType());
+        existingOrder.setStartDate(orderForm.getStartDate());
+        existingOrder.setEndDate(orderForm.getEndDate());
+
+        Order updatedOrder = orderRepository.save(existingOrder);
+        return new ResponseData<>(200, "Order updated successfully", OrderDto.from(updatedOrder));
     }
 
+    @Override
+    public ResponseData<String> changeStatusOrder(Long orderID, ChangeStatusOrderForm form) {
+        Order existOrder = orderRepository.findById(orderID).orElse(null);
+        if (existOrder == null) {
+            return new ResponseError<>(404, "Order does not exist");
+        }
 
+        Authentication currentUser = SecurityContextHolder.getContext().getAuthentication();
+        String email = currentUser.getName();
+
+        if (!existOrder.getStatus().equals(Order.Status.CANCELED)) {
+            existOrder.setStatus(form.getStatus());
+            orderRepository.save(existOrder);
+        }
+        return new ResponseData<>(200, "Change status successfully");
+    }
+
+    @Override
+    public ResponseData<String> cancelOrder(Long orderId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+
+        User currentUser = userRepository.findByEmail(email).orElse(null);
+        if (currentUser == null) {
+            return new ResponseError<>(400, "User not found with email: " + email);
+        }
+
+        Order existOrder = orderRepository.findById(orderId).orElse(null);
+        if (existOrder == null) {
+            return new ResponseError<>(404, "Order not found");
+        }
+
+        orderRepository.findByOrderIdAndUserId(existOrder.getOrderId(), currentUser.getUserId())
+                .orElse(null);
+
+        if (existOrder.getStatus().equals(Order.Status.CANCELED)) {
+            return new ResponseError<>(400, "Order already canceled");
+        }
+
+        existOrder.setStatus(Order.Status.CANCELED);
+        orderRepository.save(existOrder);
+        return new ResponseData<>(200, "Canceled successfully");
+    }
+
+    @Override
+    public ResponseData<OrderDto> updateOrderForUser(Long orderId, OrderForm orderForm) {
+        // Lấy thông tin người dùng hiện tại
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+
+        User currentUser = userRepository.findByEmail(email).orElse(null);
+        if (currentUser == null) {
+            return new ResponseError<>(401, "User not found with email: " + email);
+        }
+
+        // Tìm đơn hàng đã tồn tại
+        Order existingOrder = orderRepository.findById(orderId)
+                .orElse(null);
+        if (existingOrder == null) {
+            return new ResponseError<>(404, "Order not found");
+        }
+
+        // Cập nhật thông tin đơn hàng
+        existingOrder.setDesignDetails(orderForm.getDesignDetails());
+        existingOrder.setServiceType(orderForm.getServiceType());
+        existingOrder.setStartDate(orderForm.getStartDate());
+        existingOrder.setEndDate(orderForm.getEndDate());
+        existingOrder.setAddress(orderForm.getAddress());
+
+        Order updatedOrder = orderRepository.save(existingOrder);
+        return new ResponseData<>(200, "Order updated successfully", OrderDto.from(updatedOrder));
+    }
+
+    @Override
+    public ResponseData<List<OrderDto>> getAll() {
+        // Lấy tất cả đơn hàng
+        List<OrderDto> orders = orderRepository.findAll().stream()
+                .map(OrderDto::from)
+                .collect(Collectors.toList());
+        return new ResponseData<>(200, "Orders retrieved successfully", orders);
+    }
+
+    @Override
+    public ResponseData<List<OrderDto>> getMyOrder() {
+        // Lấy thông tin người dùng hiện tại
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+
+        User currentUser = userRepository.findByEmail(email)
+                .orElse(null);
+        if (currentUser == null) {
+            return new ResponseError<>(401, "User not found with email: " + email);
+        }
+
+        // Lấy đơn hàng của người dùng hiện tại
+        List<OrderDto> orders = orderRepository.findByUser(currentUser).stream()
+                .map(OrderDto::from)
+                .collect(Collectors.toList());
+        return new ResponseData<>(200, "My orders retrieved successfully", orders);
+    }
+
+    @Override
+    public ResponseData<OrderDto> getOrderDetailsForAdmin(Long orderId) {
+        // Tìm đơn hàng cho quản trị viên
+        Order order = orderRepository.findById(orderId)
+                .orElse(null);
+        if (order == null) {
+            return new ResponseError<>(404, "Order not found with id: " + orderId);
+        }
+
+        return new ResponseData<>(200, "Order details retrieved successfully", OrderDto.from(order));
+    }
+
+    @Override
+    public ResponseData<OrderDto> getOrderDetailsForUser(Long orderId) {
+        // Tìm đơn hàng
+        Order order = orderRepository.findById(orderId)
+                .orElse(null);
+        if (order == null) {
+            return new ResponseError<>(404, "Order not found with id: " + orderId);
+        }
+
+        // Kiểm tra quyền truy cập của người dùng
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+
+        if (!order.getUser().getEmail().equals(email)) {
+            return new ResponseError<>(403, "You do not have access to this order");
+        }
+
+        return new ResponseData<>(200, "Order details retrieved successfully", OrderDto.from(order));
+    }
 }

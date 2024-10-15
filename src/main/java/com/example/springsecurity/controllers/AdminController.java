@@ -1,13 +1,11 @@
 package com.example.springsecurity.controllers;
 
-
-import com.example.springsecurity.exception.ResourceNotFoundException;
 import com.example.springsecurity.model.dto.OrderDto;
 import com.example.springsecurity.model.dto.UserDto;
-import com.example.springsecurity.model.entity.User;
-import com.example.springsecurity.model.payload.ChangeStatusOrderForm;
-import com.example.springsecurity.model.payload.OrderForm;
-import com.example.springsecurity.model.payload.UserForm;
+import com.example.springsecurity.model.payload.request.ChangeStatusOrderForm;
+import com.example.springsecurity.model.payload.request.OrderForm;
+import com.example.springsecurity.model.payload.request.UserForm;
+import com.example.springsecurity.model.payload.response.ResponseData;
 import com.example.springsecurity.repository.UserRepository;
 import com.example.springsecurity.service.OrderService;
 import com.example.springsecurity.service.UserService;
@@ -16,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -33,43 +30,59 @@ public class AdminController {
     @Autowired
     private final UserRepository userRepository;
 
-    // XEM
+    // XEM TẤT CẢ NGƯỜI DÙNG
     @GetMapping("/users")
-    public ResponseEntity<List<UserDto>> getAllUsers() { return ResponseEntity.ok(userService.getAll());}
+    public ResponseEntity<ResponseData<List<UserDto>>> getAllUsers() {
+        ResponseData<List<UserDto>> response = userService.getAll();
+        return ResponseEntity.ok(response);
+    }
 
-    // XÓA
+    // XÓA NGƯỜI DÙNG
     @DeleteMapping("/users/delete/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable Long id) {return ResponseEntity.ok(userService.delete(id));}
+    public ResponseEntity<ResponseData<String>> deleteUser(@PathVariable Long id) {
+        ResponseData<String> response = userService.delete(id);
+        return ResponseEntity.ok(response);
+    }
 
-    // SỬA
+    // SỬA NGƯỜI DÙNG
     @PutMapping("/users/update/{id}")
-    public ResponseEntity<String> updateUser(@PathVariable Long id, @RequestBody UserForm form) { return ResponseEntity.ok(userService.update(id, form));}
+    public ResponseEntity<ResponseData<String>> updateUser(@PathVariable Long id, @RequestBody UserForm form) {
+        ResponseData<String> response = userService.update(id, form);
+        return ResponseEntity.ok(response);
+    }
 
-    // XEM CHI TẾT
+    // XEM CHI TIẾT NGƯỜI DÙNG
     @GetMapping("/users/{id}")
-    public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {UserDto user = userService.getById(id);return ResponseEntity.ok(user);}
+    public ResponseEntity<ResponseData<UserDto>> getUserById(@PathVariable Long id) {
+        ResponseData<UserDto> user = userService.getById(id);
+        return ResponseEntity.ok(user);
+    }
 
-    // PHAN DON HANG
+    // XEM TẤT CẢ ĐƠN HÀNG
     @GetMapping("/orders")
-    public ResponseEntity<List<OrderDto>> getAllOrders() { return ResponseEntity.ok(orderService.getAll());}
+    public ResponseEntity<ResponseData<List<OrderDto>>> getAllOrders() {
+        ResponseData<List<OrderDto>> response = orderService.getAll();
+        return ResponseEntity.ok(response);
+    }
 
-    // Cập nhật (designDetails serviceType startDate endDate) của đơn hàng
+    // CẬP NHẬT ĐƠN HÀNG
     @PutMapping("/orders/update/{orderId}")
-    public ResponseEntity<OrderDto> updateOrder(@PathVariable Long orderId, @RequestBody OrderForm form) {return ResponseEntity.ok(orderService.updateOrder(orderId, form));}
+    public ResponseEntity<ResponseData<OrderDto>> updateOrder(@PathVariable Long orderId, @RequestBody OrderForm form) {
+        ResponseData<OrderDto> response = orderService.updateOrder(orderId, form);
+        return ResponseEntity.ok(response);
+    }
 
-    // Cập nhật đơn hàng ( PENDING, IN_PROGRESS, COMPLETED, CANElED) admin thuc hien
+    // THAY ĐỔI TRẠNG THÁI ĐƠN HÀNG
     @PatchMapping("/orders/change-status/{orderId}")
-    public ResponseEntity<String> ChangeStatusOrder(@PathVariable Long orderId, @RequestBody ChangeStatusOrderForm form){return ResponseEntity.ok(orderService.changeStatusOrder(orderId,form));}
+    public ResponseEntity<ResponseData<String>> changeStatusOrder(@PathVariable Long orderId, @RequestBody ChangeStatusOrderForm form) {
+        ResponseData<String> response = orderService.changeStatusOrder(orderId, form);
+        return ResponseEntity.ok(response);
+    }
 
-    // Admin xem chi tiết đơn hàng
+    // ADMIN XEM CHI TIẾT ĐƠN HÀNG
     @GetMapping("/orders/{orderId}")
-    public ResponseEntity<OrderDto> getOrderDetailsForAdmin(@PathVariable Long orderId) {OrderDto order = orderService.getOrderDetailsForAdmin(orderId);return ResponseEntity.ok(order);}
-
+    public ResponseEntity<ResponseData<OrderDto>> getOrderDetailsForAdmin(@PathVariable Long orderId) {
+        ResponseData<OrderDto> order = orderService.getOrderDetailsForAdmin(orderId);
+        return ResponseEntity.ok(order);
+    }
 }
-//
-//    // SEARCH
-//    @GetMapping("/search")
-//    public ResponseEntity<List<UserDto>> searchUsers(@RequestParam String query) {List<UserDto> users = userService.searchUser(query);
-//        return ResponseEntity.ok(users);
-//    }
-
