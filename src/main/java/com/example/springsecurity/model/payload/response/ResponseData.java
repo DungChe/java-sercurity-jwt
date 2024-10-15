@@ -1,4 +1,4 @@
-package com.example.springsecurity.model.payload;
+package com.example.springsecurity.model.payload.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
