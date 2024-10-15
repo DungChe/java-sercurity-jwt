@@ -1,4 +1,4 @@
-package com.example.springsecurity.model.payload;
+package com.example.springsecurity.model.payload.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 @Data
 public class SignUpForm {
-    private String fullName;
+    private String username;
     @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate dob;
     private String email;
