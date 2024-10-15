@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Configuration
 public class DataInitializer {
@@ -29,6 +30,8 @@ public class DataInitializer {
         return args -> {
             // Insert roles
             insertRoles(roleRepository);
+
+
 
             // Create users
             Role adminRole = roleRepository.findByName("ROLE_ADMIN").orElse(null);
@@ -46,9 +49,12 @@ public class DataInitializer {
             User constructionStaff = createUser(userRepository, passwordEncoder, constructionStaffRole, "constructionStaff", "construction@gmail.com", "Construction Staff User");
             User manager = createUser(userRepository, passwordEncoder, managerRole, "manager", "manager@gmail.com", "Manager User");
 
-            // Initialize orders
-            Order order1 = new Order(null, "Design 1 Details", user1, "Cleaning", LocalDate.now(), LocalDate.now().plusDays(7), "InProgress");
-            Order order2 = new Order(null, "Design 2 Details", user2, "Maintenance", LocalDate.now(), LocalDate.now().plusDays(14), "Completed");
+            String orderNumber1 = UUID.randomUUID().toString(); // Tạo số đơn hàng ngẫu nhiên
+            Order order1 = new Order("Thông tin đơn hàng",null, orderNumber1,"Cleaning", user1, "Quận 12", Order.ServiceType.DESIGN, LocalDate.now(), LocalDate.now().plusDays(7), Order.Status.INPROGRESS);
+
+            String orderNumber2 = UUID.randomUUID().toString(); // Tạo số đơn hàng ngẫu nhiên
+            Order order2 = new Order("Thông tin đơn hàng",null, orderNumber2, "Maintenance", user2, "Quận 12", Order.ServiceType.MAINTENANCE, LocalDate.now(), LocalDate.now().plusDays(14), Order.Status.COMPLETED);
+
             orderRepository.save(order1);
             orderRepository.save(order2);
 
@@ -88,7 +94,6 @@ public class DataInitializer {
                 .username(username)
                 .email(email)
                 .password(passwordEncoder.encode("123456"))
-                .fullName(fullName)
                 .role(role)
                 .createdDate(LocalDate.now())
                 .status("ACTIVE")
