@@ -1,4 +1,4 @@
-package com.example.springsecurity.model.payload;
+package com.example.springsecurity.model.payload.request;
 
 import lombok.Data;
 
