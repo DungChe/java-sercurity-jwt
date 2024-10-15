@@ -14,9 +14,11 @@ import java.time.LocalDate;
 @Data
 @Builder
 public class OrderDto {
+    private String title;
     private Long orderId;
+    private String orderNumber;
     private String designDetails;
-    private String serviceType;
+    private Order.ServiceType serviceType;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate startDate;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
@@ -25,9 +27,11 @@ public class OrderDto {
 
     public static OrderDto from(Order order) {
         return OrderDto.builder()
+                .title(order.getTitle())
                 .orderId(order.getOrderId())
+                .orderNumber(order.getOrderNumber())
                 .designDetails(order.getDesignDetails())
-                .serviceType(order.getServiceType().toString())   // toString do enum roi
+                .serviceType(order.getServiceType())   // toString do enum roi
                 .startDate(order.getStartDate())
                 .endDate(order.getEndDate())
                 .status(order.getStatus().toString())           // toString do enum roi
