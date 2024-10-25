@@ -1,4 +1,4 @@
-package com.example.springsecurity.kafka;
+package com.example.springsecurity.config;
 
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerConfig;
