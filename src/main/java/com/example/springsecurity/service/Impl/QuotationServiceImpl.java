@@ -5,15 +5,22 @@ import com.example.springsecurity.model.entity.Quotation;
 import com.example.springsecurity.model.entity.User; // Nhập khẩu lớp User
 import com.example.springsecurity.model.payload.request.QuotationForm;
 import com.example.springsecurity.model.payload.response.ResponseData;
+import com.example.springsecurity.model.payload.response.ResponseError;
 import com.example.springsecurity.repository.QuotationRepository;
 import com.example.springsecurity.repository.UserRepository; // Nhập khẩu lớp UserRepository
 import com.example.springsecurity.service.QuotationService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class QuotationServiceImpl implements QuotationService {
 
@@ -25,6 +32,7 @@ public class QuotationServiceImpl implements QuotationService {
 
     @Override
     public ResponseData<QuotationDto> newQuo(QuotationForm form) {
+        log.info("Creating a new quotation ....");
         Quotation quo = new Quotation();
 
         // Tìm người dùng dựa trên email
@@ -58,5 +66,71 @@ public class QuotationServiceImpl implements QuotationService {
         QuotationDto quotationDto = QuotationDto.toDto(savedQuotation);
 
         return new ResponseData<>(200, "Create quotation successfully", quotationDto);
+    }
+
+    // Người dùng xem danh sách báo giá từ admin gủi xuống.
+    @Override
+    public ResponseData<List<QuotationDto>> getListQuoByUser() {
+        log.info("Retrieving the quotations list ...");
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName();
+
+        User currentUser = userRepository.findByEmail(email)
+                .orElse(null);
+        if (currentUser == null) {return new ResponseError<>(401, "User not found with email: " + email);}
+
+        // Lấy danh sách báo giá theo người dùng
+        List<Quotation> quotations = quotationRepository.findByUser(currentUser);
+        if (quotations.isEmpty()) {
+            return new ResponseData<>(404, "No quotations found for this user", null);
+        }
+
+        List<QuotationDto> quotationDtos = quotations.stream()
+                .map(QuotationDto::toDto)
+                .collect(Collectors.toList());
+
+        return new ResponseData<>(200, "Quotations retrieved successfully", quotationDtos);
+    }
+
+    @Override
+    public ResponseData<QuotationDto> approveQuotation(Long quoId){
+        log.info("Accepting quotation with quoId "+ quoId);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName();;
+
+        User currentUser = userRepository.findByEmail(email).orElse(null);
+        if( currentUser == null ) {return new ResponseError<>(401, "User not found with email: " + email);}
+
+        // Lấy quo theo ID
+        Quotation currentQuo = quotationRepository.findById(quoId).orElse(null);
+        if (currentQuo == null) {return new ResponseData<>(404, "Quotation not found", null);}
+
+         // Nếu tồn tại quo
+         currentQuo.setStatus(Quotation.Status.APPROVED);
+
+         quotationRepository.save(currentQuo);
+
+        return new ResponseData<>(200,"successfully APPROVED",null);
+    }
+
+    @Override
+    public ResponseData<QuotationDto> rejectQuotation(Long quoId){
+        log.info("Rejecting quotation with quoId "+ quoId);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName();;
+
+        User currentUser = userRepository.findByEmail(email).orElse(null);
+        if( currentUser == null ) {return new ResponseError<>(401, "User not found with email: " + email);}
+
+        // Lấy quo theo ID
+        Quotation currentQuo = quotationRepository.findById(quoId).orElse(null);
+        if (currentQuo == null) {return new ResponseData<>(404, "Quotation not found", null);}
+
+        // Nếu tồn tại quo
+        currentQuo.setStatus(Quotation.Status.REJECTED);
+
+        quotationRepository.save(currentQuo);
+
+        return new ResponseData<>(200,"successfully REJECTED",null);
     }
 }

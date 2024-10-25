@@ -7,22 +7,32 @@ import com.example.springsecurity.service.QuotationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/admin")
+@RequestMapping("/api/v1/users/")
 public class QuoController {
 
     @Autowired
     private final QuotationService quotationService;
 
-    @PostMapping("/new-quo")
-    public ResponseEntity<ResponseData<QuotationDto>> createQuo( @RequestBody QuotationForm form){
-
-        return ResponseEntity.ok(quotationService.newQuo(form));
+    @GetMapping("/quotations")
+    public ResponseEntity<ResponseData<List<QuotationDto>>> getListQuoByUser (){
+        return ResponseEntity.ok(quotationService.getListQuoByUser());
     }
+
+    @PatchMapping("/quotations/my-quo/approve/{quoId}")
+    public ResponseEntity<ResponseData<QuotationDto>> approveQuo(@PathVariable Long quoId){
+        return ResponseEntity.ok(quotationService.approveQuotation(quoId));
+    }
+
+    @PatchMapping("/quotations/my-quo/reject/{quoId}")
+    public ResponseEntity<ResponseData<QuotationDto>> rejectQuo( @PathVariable Long quoId){
+        return ResponseEntity.ok(quotationService.rejectQuotation(quoId));
+    }
+
+
 }

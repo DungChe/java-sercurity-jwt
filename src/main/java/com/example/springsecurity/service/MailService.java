@@ -32,6 +32,40 @@ public class MailService {
 
     @Value("${endpoint.confirmUser}")
     private String apiConfirmUser;
+
+    @KafkaListener(topics = "confirm-account-topic", groupId = "confirm-account-group")
+    public void sendConfirmLinkByKafka(String message) throws MessagingException, UnsupportedEncodingException {
+        log.info("Sending link to user, email={}", message);
+
+        String[] arr = message.split(",");
+        String emailTo = arr[0].substring(arr[0].indexOf('=') + 1);
+        String userId = arr[1].substring(arr[1].indexOf('=') + 1);
+        String otpCode = arr[2].substring(arr[2].indexOf('=') + 1);
+
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, StandardCharsets.UTF_8.name());
+        Context context = new Context();
+
+        String linkConfirm = String.format("%s/%s?otpCode=%s", apiConfirmUser, userId, otpCode);
+
+        // Thêm mã OTP vào context
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("linkConfirm", linkConfirm);
+        properties.put("otpCode", otpCode);
+        context.setVariables(properties);
+
+        helper.setFrom(emailFrom, "Lê Minh Phúc CN22G");
+        helper.setTo(emailTo);
+        helper.setSubject("Your OTP Code for Account Confirmation");
+        String html = templateEngine.process("confirm-email.html", context);
+        helper.setText(html, true);
+
+        mailSender.send(mimeMessage);
+        log.info("OTP has been sent to user, email={}, otp={}", emailTo, otpCode);
+    }
+
+
+
 //
 //    /**
 //     * Send email by Google SMTP
@@ -96,7 +130,7 @@ public class MailService {
 //        properties.put("linkConfirm", linkConfirm);
 //        context.setVariables(properties);
 //
-//        helper.setFrom(emailFrom, "Tây Java");
+//        helper.setFrom(emailFrom, " Java");
 //        helper.setTo(emailTo);
 //        helper.setSubject("Please confirm your account");
 //        String html = templateEngine.process("confirm-email.html", context);
@@ -106,32 +140,5 @@ public class MailService {
 //        log.info("Confirming link has sent to user, email={}, linkConfirm={}", emailTo, linkConfirm);
 //    }
 
-    @KafkaListener(topics = "confirm-account-topic", groupId = "confirm-account-group")
-    public void sendConfirmLinkByKafka(String message) throws MessagingException, UnsupportedEncodingException {
-        log.info("Sending link to user, email={}", message);
 
-        String[] arr = message.split(",");
-        String emailTo = arr[0].substring(arr[0].indexOf('=') + 1);
-        String userId = arr[1].substring(arr[1].indexOf('=') + 1);
-        String verifyCode = arr[2].substring(arr[2].indexOf('=') + 1);
-
-        MimeMessage mimeMessage = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, StandardCharsets.UTF_8.name());
-        Context context = new Context();
-
-        String linkConfirm = String.format("%s/%s?verifyCode=%s", apiConfirmUser, userId, verifyCode);
-
-        Map<String, Object> properties = new HashMap<>();
-        properties.put("linkConfirm", linkConfirm);
-        context.setVariables(properties);
-
-        helper.setFrom(emailFrom, "Lê Minh Phúc CN22G ");
-        helper.setTo(emailTo);
-        helper.setSubject("Please confirm your account");
-        String html = templateEngine.process("confirm-email.html", context);
-        helper.setText(html, true);
-
-        mailSender.send(mimeMessage);
-        log.info("Link has sent to user, email={}, linkConfirm={}", emailTo, linkConfirm);
-    }
 }

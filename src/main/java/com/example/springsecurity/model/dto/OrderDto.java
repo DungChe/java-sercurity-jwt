@@ -31,10 +31,10 @@ public class OrderDto {
                 .orderId(order.getOrderId())
                 .orderNumber(order.getOrderNumber())
                 .designDetails(order.getDesignDetails())
-                .serviceType(order.getServiceType())   // toString do enum roi
+                .serviceType(order.getServiceType())
                 .startDate(order.getStartDate())
                 .endDate(order.getEndDate())
-                .status(order.getStatus().toString())           // toString do enum roi
+                .status(order.getStatus().toString())
                 .build();
     }
 }

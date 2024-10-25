@@ -31,19 +31,11 @@
             text-align: center;
             color: #626262;
         }
-        .button {
-            display: inline-block;
-            padding: 12px 38px;
-            font-size: 16px;
-            color: #ffffff;
-            background-color: #173849;
-            text-decoration: none;
-            border-radius: 6px;
-            border: 1px solid #173849;
-            transition: background-color 0.3s ease;
-        }
-        .button:hover {
-            background-color: #0f2c3c;
+        .otp {
+            font-size: 24px;
+            font-weight: bold;
+            color: #173849;
+            margin: 20px 0;
         }
         .footer {
             padding: 15px;
@@ -60,8 +52,9 @@
         <h1>Please confirm your account.</h1>
     </div>
     <div class="content">
-        <p>Just click the link below:</p>
-        <a th:href="${linkConfirm}" class="button" rel="noopener" target="_blank">Confirm account</a>
+        <p>Your One-Time Password (OTP) for account confirmation is:</p>
+        <div class="otp" th:text="${otpCode}">123456</div>
+        <p>This OTP will expire in 10 minutes. Please use it to confirm your account.</p>
     </div>
     <div class="footer">
         <span>Phúc JAVA</span>

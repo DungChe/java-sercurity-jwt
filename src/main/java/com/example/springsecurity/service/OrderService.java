@@ -19,4 +19,5 @@ public interface OrderService {
 
     ResponseData<OrderDto> getOrderDetailsForAdmin(Long orderId);  // Admin xem chi tiết đơn hàng
     ResponseData<OrderDto> getOrderDetailsForUser(Long orderId);  // Người dùng hiện tại xem chi tiết đơn hàng của họ
+
 }

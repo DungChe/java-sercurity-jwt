@@ -38,6 +38,7 @@ public class User implements UserDetails {
     private Role role;
 
     private LocalDate createdDate;
+    private String otpCode;
     private LocalDate dob;
 
     @Column(nullable = false)

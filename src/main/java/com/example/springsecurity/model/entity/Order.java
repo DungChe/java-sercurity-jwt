@@ -26,7 +26,7 @@ public class Order {
     private User user;
     private String address;
     private ServiceType serviceType; // DESIGN,MAINTENANCE,REPAIR etc.
-    private LocalDate startDate;
+    private LocalDate startDate; 
     private LocalDate endDate;
     private Status status; // "peding , InProgress", "Completed, Canceled"
 

@@ -16,7 +16,6 @@ import com.example.springsecurity.security.JwtTokenProvider;
 import com.example.springsecurity.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.http.HttpStatus;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -26,7 +25,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
+import java.time.LocalDate;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -73,8 +73,6 @@ public class AuthServiceImpl implements AuthService {
         return AuthDto.from(user, accessToken, refreshToken, status, result);
     }
 
-
-
     @Override
     public ResponseData<String> register(SignUpForm form) {
         if (userRepository.existsByEmail(form.getEmail())) {
@@ -85,12 +83,17 @@ public class AuthServiceImpl implements AuthService {
         if(role == null){
             return new ResponseError<>(404,"Not found role ROLE_USER");
         }
+
+        // Tạo mã xác thực
+        String otpCode = String.format("%06d", new Random().nextInt(999999));
+
         // Tạo đối tượng User
         User user = User.builder()
                 .username(form.getUsername())
                 .email(form.getEmail())
                 .password(passwordEncoder.encode(form.getPassword()))
                 .role(role)
+                .otpCode(otpCode)
                 .status("INACTIVE") // Đặt trạng thái là "INACTIVE" cho đến khi xác thực email
                 .build();
 
@@ -98,15 +101,12 @@ public class AuthServiceImpl implements AuthService {
         userRepository.save(user);
         log.info("User {} registered", user.getEmail());
 
-        // Tạo mã xác thực
-        String verificationCode = UUID.randomUUID().toString();
+//        String veryfyCode = UUID.randomUUID().toString();
 
         // Gửi thông điệp đến Kafka để gửi email xác nhận
-        kafkaTemplate.send("confirm-account-topic", String.format("email=%s,id=%s,code=%s", user.getEmail(), user.getId(), verificationCode));
-
+        kafkaTemplate.send("confirm-account-topic", String.format("email=%s,id=%s,otpCode=%s", user.getEmail(), user.getId(), otpCode)); // Chỉnh sửa ở đây
         return new ResponseData<>(200,"Success register new user. Please check your email for confirmation", null);
     }
-
 
 
     @Override
@@ -132,11 +132,18 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public String confirmUser(long userId, String verifyCode) {
+    public String confirmUser(long userId, String otpCode) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
+        // Check if the OTP matches
+        if (!otpCode.equals(user.getOtpCode())) {
+            log.error("OTP does not match for userId={}", userId);
+            throw new IllegalArgumentException("OTP is incorrect");
+        }
+
         user.setStatus("ACTIVE");
+        user.setCreatedDate(LocalDate.now());
         userRepository.save(user);
         return "Confirmed!";
     }

@@ -17,7 +17,7 @@ public class Rating {
 
     @ManyToOne
     @JoinColumn(name = "service_id")
-    private Order service; // Assuming service refers to an Order
+    private Order order; // Assuming service refers to an Order
 
     @ManyToOne
     @JoinColumn(name = "user_id")

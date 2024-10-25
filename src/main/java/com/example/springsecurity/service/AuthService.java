@@ -10,6 +10,6 @@ public interface AuthService {
     AuthDto login(SignInForm form);
     ResponseData<String> register(SignUpForm form);
     AuthDto refreshJWT(String refreshToken);
-    String confirmUser(long userId, String verifyCode);
+    String confirmUser(long userId, String otpCode);
 
 }

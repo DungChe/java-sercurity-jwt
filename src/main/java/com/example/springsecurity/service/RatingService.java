@@ -1,12 +1,15 @@
 package com.example.springsecurity.service;
 
-import com.example.springsecurity.model.dto.RatingDto;
-import com.example.springsecurity.model.entity.Rating;
-import com.example.springsecurity.model.entity.User;
+import com.example.springsecurity.model.payload.request.RatingForm;
+import com.example.springsecurity.model.dto.RatingResponseModel;
+import com.example.springsecurity.model.payload.response.ResponseData;
 
 import java.util.List;
 
 public interface RatingService {
-    Rating rateService(RatingDto ratingDto);
-    List<Rating> getRatingsByCustomer(User customer);
+    ResponseData<List<RatingResponseModel>> getAll();
+    ResponseData<RatingResponseModel> newRating(Long oderID, RatingForm ratingForm);
+    // change, delete
+    ResponseData<RatingResponseModel> change(Long orderID, RatingForm ratingForm);
+    ResponseData<RatingResponseModel> deleteRatingByAdmin(Long ratingId);
 }

@@ -10,12 +10,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
+@Validated
 public class AuthController {
     private final AuthService authService;
 
@@ -32,14 +34,12 @@ public class AuthController {
     public ResponseEntity refreshToken(@RequestHeader("X-Refresh-Token") String refreshToken){return ResponseEntity.ok(authService.refreshJWT(refreshToken));}
 
 
-
-
     @GetMapping("/confirm/{userId}")
-    public ResponseData<String> confirm(@Min(1) @PathVariable Long userId, @RequestParam String verifyCode) {
-        log.info("Confirm user, userId={}, verifyCode={}", userId, verifyCode);
+    public ResponseData<String> confirm(@Min(1) @PathVariable Long userId, @RequestParam String otpCode) {
+        log.info("Confirm user, userId={}, verifyCode={}", userId, otpCode);
 
         try {
-            authService.confirmUser(userId, verifyCode);
+            authService.confirmUser(userId, otpCode);
             return new ResponseData<>(HttpStatus.ACCEPTED.value(), "User has confirmed successfully");
         } catch (Exception e) {
             log.error("errorMessage={}", e.getMessage(), e.getCause());

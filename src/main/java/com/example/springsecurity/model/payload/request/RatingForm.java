@@ -1,16 +1,13 @@
-package com.example.springsecurity.model.dto;
+package com.example.springsecurity.model.payload.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RatingDto {
-    private Long ratingId;
-    private Long serviceId;
-    private Long customerId;
+@Data
+public class RatingForm {
     private int rating;
     private String feedback;
 }

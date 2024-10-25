@@ -30,8 +30,10 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/v1/auth/**"
                         ).permitAll()
-//                        .requestMatchers("/api/orders/**").hasAnyAuthority("CUSTOMER", "MANAGER", "CONSULTING_STAFF")
-                        .requestMatchers("/api/v1/admin/**").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers("/api/v1/admin/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_MANAGER")
+                        .requestMatchers("/api/v1/designs/**").hasAnyAuthority("ROLE_DESIGN_STAFF", "ROLE_MANAGER")
+                        .requestMatchers("/api/v1/consulting-staff/**").hasAnyAuthority("ROLE_CONSULTING_STAFF", "ROLE_MANAGER")
+
                         .anyRequest().authenticated()
                 )
                 .userDetailsService(userDetailsService)

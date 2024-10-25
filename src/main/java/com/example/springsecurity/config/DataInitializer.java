@@ -1,11 +1,11 @@
 package com.example.springsecurity.config;
 
-import com.example.springsecurity.model.entity.Design;
+import com.example.springsecurity.model.entity.DesignRecord;
 import com.example.springsecurity.model.entity.Order;
 import com.example.springsecurity.model.entity.Rating;
 import com.example.springsecurity.model.entity.Role;
 import com.example.springsecurity.model.entity.User;
-import com.example.springsecurity.repository.DesignRepository;
+import com.example.springsecurity.repository.DesignRecordRepository;
 import com.example.springsecurity.repository.OrderRepository;
 import com.example.springsecurity.repository.RatingRepository;
 import com.example.springsecurity.repository.RoleRepository;
@@ -25,13 +25,11 @@ public class DataInitializer {
                                       RoleRepository roleRepository,
                                       PasswordEncoder passwordEncoder,
                                       OrderRepository orderRepository,
-                                      DesignRepository designRepository,
+                                      DesignRecordRepository designRepository,
                                       RatingRepository ratingRepository) {
         return args -> {
             // Insert roles
             insertRoles(roleRepository);
-
-
 
             // Create users
             Role adminRole = roleRepository.findByName("ROLE_ADMIN").orElse(null);
@@ -50,19 +48,16 @@ public class DataInitializer {
             User manager = createUser(userRepository, passwordEncoder, managerRole, "manager", "manager@gmail.com", "Manager User");
 
             String orderNumber1 = UUID.randomUUID().toString(); // Tạo số đơn hàng ngẫu nhiên
-            Order order1 = new Order("Thông tin đơn hàng",null, orderNumber1,"Cleaning", user1, "Quận 12", Order.ServiceType.DESIGN, LocalDate.now(), LocalDate.now().plusDays(7), Order.Status.INPROGRESS);
-
+            Order order1 = new Order("Thông tin đơn hàng", null, orderNumber1, "Cleaning", user1, "Quận 12", Order.ServiceType.DESIGN, LocalDate.now(), LocalDate.now().plusDays(7), Order.Status.INPROGRESS);
             String orderNumber2 = UUID.randomUUID().toString(); // Tạo số đơn hàng ngẫu nhiên
-            Order order2 = new Order("Thông tin đơn hàng",null, orderNumber2, "Maintenance", user2, "Quận 12", Order.ServiceType.MAINTENANCE, LocalDate.now(), LocalDate.now().plusDays(14), Order.Status.COMPLETED);
+            Order order2 = new Order("Thông tin đơn hàng", null, orderNumber2, "Maintenance", user2, "Quận 12", Order.ServiceType.MAINTENANCE, LocalDate.now(), LocalDate.now().plusDays(14), Order.Status.COMPLETED);
 
             orderRepository.save(order1);
             orderRepository.save(order2);
 
             // Initialize designs
-            Design design1 = new Design(null, "Design for Koi Pond 1", "Approved", admin);
-            Design design2 = new Design(null, "Design for Koi Pond 2", "Pending", admin);
+            DesignRecord design1 = new DesignRecord(null, designStaff, user1,"C:\\Users\\admin\\Downloads\\ban_thiet_ke",null, LocalDate.now(), LocalDate.now(), "Engineer notes here");
             designRepository.save(design1);
-            designRepository.save(design2);
 
             // Initialize ratings
             Rating rating1 = new Rating(null, order1, user1, 5, "Excellent service!");
@@ -73,20 +68,24 @@ public class DataInitializer {
     }
 
     private void insertRoles(RoleRepository roleRepository) {
-        Role adminRole = Role.builder().name("ROLE_ADMIN").build();
-        Role userRole = Role.builder().name("ROLE_USER").build();
-        Role consultingStaffRole = Role.builder().name("ROLE_CONSULTING_STAFF").build();
-        Role designStaffRole = Role.builder().name("ROLE_DESIGN_STAFF").build();
-        Role constructionStaffRole = Role.builder().name("ROLE_CONSTRUCTION_STAFF").build();
-        Role managerRole = Role.builder().name("ROLE_MANAGER").build();
-
-        // Save roles to the database
-        roleRepository.save(adminRole);
-        roleRepository.save(userRole);
-        roleRepository.save(consultingStaffRole);
-        roleRepository.save(designStaffRole);
-        roleRepository.save(constructionStaffRole);
-        roleRepository.save(managerRole);
+        if (roleRepository.findByName("ROLE_ADMIN").isEmpty()) {
+            roleRepository.save(Role.builder().name("ROLE_ADMIN").build());
+        }
+        if (roleRepository.findByName("ROLE_USER").isEmpty()) {
+            roleRepository.save(Role.builder().name("ROLE_USER").build());
+        }
+        if (roleRepository.findByName("ROLE_CONSULTING_STAFF").isEmpty()) {
+            roleRepository.save(Role.builder().name("ROLE_CONSULTING_STAFF").build());
+        }
+        if (roleRepository.findByName("ROLE_DESIGN_STAFF").isEmpty()) {
+            roleRepository.save(Role.builder().name("ROLE_DESIGN_STAFF").build());
+        }
+        if (roleRepository.findByName("ROLE_CONSTRUCTION_STAFF").isEmpty()) {
+            roleRepository.save(Role.builder().name("ROLE_CONSTRUCTION_STAFF").build());
+        }
+        if (roleRepository.findByName("ROLE_MANAGER").isEmpty()) {
+            roleRepository.save(Role.builder().name("ROLE_MANAGER").build());
+        }
     }
 
     private User createUser(UserRepository userRepository, PasswordEncoder passwordEncoder, Role role, String username, String email, String fullName) {
