@@ -37,6 +37,13 @@
             color: #173849;
             margin: 20px 0;
         }
+        .link-confirm {
+            font-size: 16px;
+            color: #173849;
+            text-decoration: none;
+            margin-top: 20px;
+            display: inline-block;
+        }
         .footer {
             padding: 15px;
             background-color: #F4F4F4;
@@ -49,12 +56,13 @@
 <body>
 <div class="container">
     <div class="header">
-        <h1>Please confirm your account.</h1>
+        <h1>Please confirm your account</h1>
     </div>
     <div class="content">
         <p>Your One-Time Password (OTP) for account confirmation is:</p>
         <div class="otp" th:text="${otpCode}">123456</div>
         <p>This OTP will expire in 10 minutes. Please use it to confirm your account.</p>
+        <a th:href="${linkConfirm}" class="link-confirm">Click here to confirm your account</a>
     </div>
     <div class="footer">
         <span>Phúc JAVA</span>
