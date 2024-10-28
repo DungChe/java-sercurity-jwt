@@ -1,5 +1,6 @@
 package com.example.springsecurity.controllers;
 
+import com.example.springsecurity.model.payload.request.OTPForm;
 import com.example.springsecurity.model.payload.response.ResponseData;
 import com.example.springsecurity.model.payload.response.ResponseError;
 import com.example.springsecurity.model.payload.request.SignInForm;
@@ -35,15 +36,15 @@ public class AuthController {
 
 
     @GetMapping("/confirm/{userId}")
-    public ResponseData<String> confirm(@Min(1) @PathVariable Long userId, @RequestParam String otpCode) {
-        log.info("Confirm user, userId={}, verifyCode={}", userId, otpCode);
+    public ResponseData<String> confirm(@Min(1) @PathVariable Long userId, @RequestBody OTPForm otpForm) {
+        log.info("Confirm user, userId={}, otpCode={}", userId, otpForm.getOtpCode());
 
         try {
-            authService.confirmUser(userId, otpCode);
-            return new ResponseData<>(HttpStatus.ACCEPTED.value(), "User has confirmed successfully");
+            authService.confirmUser(userId, otpForm.getOtpCode());
+            return new ResponseData<>(200, "User has confirmed successfully");
         } catch (Exception e) {
             log.error("errorMessage={}", e.getMessage(), e.getCause());
-            return new ResponseError(HttpStatus.BAD_REQUEST.value(), "Confirm was failed");
+            return new ResponseError(400, "Confirm was failed");
         }
     }
 
