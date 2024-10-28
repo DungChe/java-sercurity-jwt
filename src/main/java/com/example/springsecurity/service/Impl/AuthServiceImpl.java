@@ -105,7 +105,7 @@ public class AuthServiceImpl implements AuthService {
 
         // Gửi thông điệp đến Kafka để gửi email xác nhận
         kafkaTemplate.send("confirm-account-topic", String.format("email=%s,id=%s,otpCode=%s", user.getEmail(), user.getId(), otpCode)); // Chỉnh sửa ở đây
-        return new ResponseData<>(200,"Success register new user with id. Please check your email for confirmation", "Id: " + user.getUserId());
+        return new ResponseData<>(200,"Success register new user. Please check your email for confirmation", "Id: " + user.getUserId());
     }
 
 
