@@ -31,14 +31,11 @@ public class DesignRecordServiceImpl implements DesignRecordService {
 
     @Override
     public ResponseData<DesignRecordDto> createDesignCord(DesignRecordForm form, Long customerId) {
-        // Lấy đối tượng kỹ sư
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String email = auth.getName();
 
-        // Xác nhận có phải kỹ sư không
         User engineer = userRepository.findByEmail(email).orElse(null);
 
-        // Tạo hồ sơ bản vẽ
         DesignRecord newDesignRecord = new DesignRecord();
         newDesignRecord.setEngineer(engineer); // Gán kỹ sư gửi bản vẽ
         newDesignRecord.setCustomer(userRepository.findById(customerId).orElse(null)); // Lấy khách hàng từ ID
@@ -47,10 +44,8 @@ public class DesignRecordServiceImpl implements DesignRecordService {
         newDesignRecord.setCreationDate(LocalDate.now()); // Ngày lập hồ sơ
         newDesignRecord.setUpdateDate(LocalDate.now()); // Ngày cập nhật hồ sơ
 
-        // Lưu hồ sơ vào cơ sở dữ liệu
         DesignRecord savedRecord = designRecordRepository.save(newDesignRecord);
 
-        // Chuyển đổi sang DTO để trả về
         DesignRecordDto designRecordDto = DesignRecordDto.toDto(savedRecord);
 
         return new ResponseData<>(200, "Design record created successfully", designRecordDto);
@@ -95,10 +90,8 @@ public class DesignRecordServiceImpl implements DesignRecordService {
         User currentUser = userRepository.findByEmail(email).orElse(null);
         if (currentUser == null) {return new ResponseError<>(404, "User not found");}
 
-        // Lấy tất cả bản vẽ liên quan đến khách hàng hiện tại
         List<DesignRecord> designRecords = designRecordRepository.findAllByCustomer(currentUser);
 
-        // Chuyển đổi tất cả bản vẽ thành DTO
         List<DesignRecordDto> designRecordDtos = designRecords.stream()
                 .map(DesignRecordDto::toDto)
                 .collect(Collectors.toList());
@@ -114,11 +107,9 @@ public class DesignRecordServiceImpl implements DesignRecordService {
         User currentUser = userRepository.findByEmail(email).orElse(null);
         if (currentUser == null) {return new ResponseError<>(404, "User not found");}
 
-        // Tìm bản vẽ theo ID
         DesignRecord designRecord = designRecordRepository.findById(recordId).orElse(null);
         if (designRecord == null) {return new ResponseError<>(404, "Design record not found");}
 
-        // Kiểm tra xem người dùng có phải là khách hàng liên quan đến bản vẽ này không
         if (!designRecord.getCustomer().getId().equals(currentUser.getId())) {
             return new ResponseError<>(403, "Access denied. You are not the customer for this design record.");}
 
@@ -134,18 +125,14 @@ public class DesignRecordServiceImpl implements DesignRecordService {
         User currentUser = userRepository.findByEmail(email).orElse(null);
         if (currentUser == null) {return new ResponseError<>(404, "User not found");}
 
-        // Tìm hồ sơ bản vẽ theo ID
         DesignRecord designRecord = designRecordRepository.findById(recordId).orElse(null);
         if (designRecord == null) {return new ResponseError<>(404, "Design record not found");}
 
-        // Kiểm tra xem người dùng có phải là khách hàng liên quan không
         if (!designRecord.getCustomer().getId().equals(currentUser.getId())) {return new ResponseError<>(403, "Access denied. You are not the customer for this design record.");}
 
-        // Cập nhật phản hồi từ khách hàng
         designRecord.setCustomerFeedback(form.getCustomerFeedback());
         designRecord.setUpdateDate(LocalDate.now());
 
-        // Lưu hồ sơ cập nhật vào cơ sở dữ liệu
         DesignRecord savedRecord = designRecordRepository.save(designRecord);
         return new ResponseData<>(200, "Customer feedback updated successfully");
     }

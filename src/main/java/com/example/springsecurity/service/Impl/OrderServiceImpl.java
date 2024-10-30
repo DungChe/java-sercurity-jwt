@@ -153,7 +153,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public ResponseData<List<OrderDto>> getMyOrder() {
-        // Lấy thông tin người dùng hiện tại
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
 
@@ -163,7 +162,6 @@ public class OrderServiceImpl implements OrderService {
             return new ResponseError<>(401, "User not found with email: " + email);
         }
 
-        // Lấy đơn hàng của người dùng hiện tại
         List<OrderDto> orders = orderRepository.findByUser(currentUser).stream()
                 .map(OrderDto::from)
                 .collect(Collectors.toList());
@@ -172,7 +170,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public ResponseData<OrderDto> getOrderDetailsForAdmin(Long orderId) {
-        // Tìm đơn hàng cho quản trị viên
         Order order = orderRepository.findById(orderId)
                 .orElse(null);
         if (order == null) {
@@ -184,14 +181,12 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public ResponseData<OrderDto> getOrderDetailsForUser(Long orderId) {
-        // Tìm đơn hàng
         Order order = orderRepository.findById(orderId)
                 .orElse(null);
         if (order == null) {
             return new ResponseError<>(404, "Order not found with id: " + orderId);
         }
 
-        // Kiểm tra quyền truy cập của người dùng
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
 

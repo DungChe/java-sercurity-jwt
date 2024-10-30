@@ -61,7 +61,6 @@ public class QuotationServiceImpl implements QuotationService {
         quo.setExpirationDate(form.getExpirationDate()); // Ngày hết hạn của báo giá
         quo.setStatus(Quotation.Status.PENDING); // Trạng thái báo giá mặc định là PENDING
 
-        // Lưu báo giá vào cơ sở dữ liệu
         Quotation savedQuotation = quotationRepository.save(quo);
         QuotationDto quotationDto = QuotationDto.toDto(savedQuotation);
 
