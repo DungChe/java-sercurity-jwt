@@ -39,13 +39,13 @@ public class DataInitializer {
             Role constructionStaffRole = roleRepository.findByName("ROLE_CONSTRUCTION_STAFF").orElse(null);
             Role managerRole = roleRepository.findByName("ROLE_MANAGER").orElse(null);
 
-            User user1 = createUser(userRepository, passwordEncoder, userRole, "user1", "phuclmdev@gmail.com", "Customer User", "123 Main St");
-            User user2 = createUser(userRepository, passwordEncoder, userRole, "User2", "phuclmdev2@gmail.com", "Customer User", "456 Maple Ave");
-            User admin = createUser(userRepository, passwordEncoder, adminRole, "admin", "admin@gmail.com", "Admin User", "789 Oak Blvd");
-            User consultingStaff = createUser(userRepository, passwordEncoder, consultingStaffRole, "consultingStaff", "consulting@gmail.com", "Consulting Staff User", "321 Pine St");
-            User designStaff = createUser(userRepository, passwordEncoder, designStaffRole, "designStaff", "design@gmail.com", "Design Staff User", "654 Cedar Rd");
-            User constructionStaff = createUser(userRepository, passwordEncoder, constructionStaffRole, "constructionStaff", "construction@gmail.com", "Construction Staff User", "987 Birch Ln");
-            User manager = createUser(userRepository, passwordEncoder, managerRole, "manager", "manager@gmail.com", "Manager User", "123 Elm St");
+            User user1 = createUser(userRepository, passwordEncoder, userRole, "user1", "phuclmdev@gmail.com" );
+            User user2 = createUser(userRepository, passwordEncoder, userRole, "User2", "phuclmdev2@gmail.com" );
+            User admin = createUser(userRepository, passwordEncoder, adminRole, "admin", "admin@gmail.com");
+            User consultingStaff = createUser(userRepository, passwordEncoder, consultingStaffRole, "consultingStaff", "consulting@gmail.com");
+            User designStaff = createUser(userRepository, passwordEncoder, designStaffRole, "designStaff", "design@gmail.com");
+            User constructionStaff = createUser(userRepository, passwordEncoder, constructionStaffRole, "constructionStaff", "construction@gmail.com");
+            User manager = createUser(userRepository, passwordEncoder, managerRole, "manager", "manager@gmail.com");
 
             String orderNumber1 = UUID.randomUUID().toString(); // Tạo số đơn hàng ngẫu nhiên
             Order order1 = new Order("Thông tin đơn hàng", null, orderNumber1, "Cleaning", user1, "Quận 12", Order.ServiceType.DESIGN, LocalDate.now(), LocalDate.now().plusDays(7), Order.Status.INPROGRESS);
@@ -88,13 +88,12 @@ public class DataInitializer {
         }
     }
 
-    private User createUser(UserRepository userRepository, PasswordEncoder passwordEncoder, Role role, String username, String email, String fullName, String address) {
+    private User createUser(UserRepository userRepository, PasswordEncoder passwordEncoder, Role role, String username, String email) {
         User user = User.builder()
                 .username(username)
                 .email(email)
-                .password(passwordEncoder.encode("123456"))
+               .password(passwordEncoder.encode("123456"))
                 .role(role)
-                .address(address) // Set address here
                 .createdDate(LocalDate.now())
                 .status("ACTIVE")
                 .build();

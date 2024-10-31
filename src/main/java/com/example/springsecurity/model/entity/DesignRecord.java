@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DesignRecord {
+public class  DesignRecord {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
