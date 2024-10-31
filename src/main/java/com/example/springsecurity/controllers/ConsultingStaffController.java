@@ -41,9 +41,9 @@ public class ConsultingStaffController {
     }
 
     // LẬP BẢNG BÁO GIÁ ( QUOTATIONS )
-    @PostMapping("/create-quotation")
-    public ResponseEntity<ResponseData<QuotationDto>> createQuo(@RequestBody QuotationForm form){
-        return ResponseEntity.ok(quotationService.newQuo(form));
+    @PostMapping("/create-quotation/{orderId}")
+    public ResponseEntity<ResponseData<QuotationDto>> newQuo(@PathVariable Long orderId, @RequestBody QuotationForm form) {
+        return ResponseEntity.ok(quotationService.newQuo(form, orderId));
     }
 
     // LẬP HÓA ĐƠN BẢO TRÌ ( MAINTENACE )

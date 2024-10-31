@@ -48,9 +48,9 @@ public class DataInitializer {
             User manager = createUser(userRepository, passwordEncoder, managerRole, "manager", "manager@gmail.com");
 
             String orderNumber1 = UUID.randomUUID().toString(); // Tạo số đơn hàng ngẫu nhiên
-            Order order1 = new Order("Thông tin đơn hàng", null, orderNumber1, "Cleaning", user1, "Quận 12", Order.ServiceType.DESIGN, LocalDate.now(), LocalDate.now().plusDays(7), Order.Status.INPROGRESS);
+            Order order1 = new Order("Thông tin đơn hàng", null, orderNumber1, "09641623664","Cleaning", user1, "Quận 12", Order.ServiceType.DESIGN, LocalDate.now(), LocalDate.now().plusDays(7), Order.Status.INPROGRESS);
             String orderNumber2 = UUID.randomUUID().toString(); // Tạo số đơn hàng ngẫu nhiên
-            Order order2 = new Order("Thông tin đơn hàng", null, orderNumber2, "Maintenance", user2, "Quận 12", Order.ServiceType.MAINTENANCE, LocalDate.now(), LocalDate.now().plusDays(14), Order.Status.COMPLETED);
+            Order order2 = new Order("Thông tin đơn hàng", null, orderNumber2,"0937473732", "Maintenance", user2, "Quận 12", Order.ServiceType.MAINTENANCE, LocalDate.now(), LocalDate.now().plusDays(14), Order.Status.COMPLETED);
 
             orderRepository.save(order1);
             orderRepository.save(order2);

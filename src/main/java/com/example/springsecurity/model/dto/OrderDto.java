@@ -17,6 +17,7 @@ public class OrderDto {
     private String title;
     private Long orderId;
     private String orderNumber;
+    private String userPhone;
     private String designDetails;
     private Order.ServiceType serviceType;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
@@ -30,6 +31,7 @@ public class OrderDto {
                 .title(order.getTitle())
                 .orderId(order.getOrderId())
                 .orderNumber(order.getOrderNumber())
+                .userPhone(order.getPhone())
                 .designDetails(order.getDesignDetails())
                 .serviceType(order.getServiceType())
                 .startDate(order.getStartDate())

@@ -32,11 +32,11 @@ public class QuotationDto {
         return QuotationDto.builder()
                 .quotationId(quotation.getQuotationId())
                 .quotationNumber(quotation.getQuotationNumber())
-                .customerName(quotation.getCustomerName())
-                .phoneNumber(quotation.getPhoneNumber())
-                .email(quotation.getEmail())
-                .address(quotation.getAddress())
-                .serviceType(quotation.getServiceType())
+                .customerName(quotation.getUser().getUsername())
+                .phoneNumber(quotation.getOrder().getPhone())
+                .email(quotation.getUser().getEmail())
+                .address(quotation.getOrder().getAddress())
+                .serviceType(quotation.getOrder().getServiceType().toString())
                 .areaSize(quotation.getAreaSize())  // Sử dụng diện tích dưới dạng double
                 .location(quotation.getLocation()) // Thêm location
                 .designDetails(quotation.getDesignDetails())
