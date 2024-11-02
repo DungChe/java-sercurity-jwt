@@ -20,6 +20,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderId;
     private String orderNumber;
+    private String phone;
     private String designDetails;
     @ManyToOne
     @JoinColumn(name = "user_id")
