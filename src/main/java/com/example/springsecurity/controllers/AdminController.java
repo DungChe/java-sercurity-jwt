@@ -1,14 +1,17 @@
 package com.example.springsecurity.controllers;
 
 import com.example.springsecurity.model.dto.OrderDto;
+import com.example.springsecurity.model.dto.QuotationDto;
 import com.example.springsecurity.model.dto.RatingResponseModel;
 import com.example.springsecurity.model.dto.UserDto;
 import com.example.springsecurity.model.payload.request.ChangeStatusOrderForm;
 import com.example.springsecurity.model.payload.request.OrderForm;
+import com.example.springsecurity.model.payload.request.QuotationForm;
 import com.example.springsecurity.model.payload.request.UserForm;
 import com.example.springsecurity.model.payload.response.ResponseData;
 import com.example.springsecurity.repository.UserRepository;
 import com.example.springsecurity.service.OrderService;
+import com.example.springsecurity.service.QuotationService;
 import com.example.springsecurity.service.RatingService;
 import com.example.springsecurity.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -24,13 +27,15 @@ import java.util.List;
 public class AdminController {
 
     @Autowired
-    private final UserService userService;
+    private UserService userService;
     @Autowired
-    private final OrderService orderService;
+    private OrderService orderService;
     @Autowired
-    private final UserRepository userRepository;
-    private final RatingService ratingService;
-
+    private UserRepository userRepository;
+    @Autowired
+    private RatingService ratingService;
+    @Autowired
+    private QuotationService quotationService;
     // XEM TẤT CẢ NGƯỜI DÙNG
     @GetMapping("/users")
     public ResponseEntity<ResponseData<List<UserDto>>> getAllUsers() {
@@ -94,4 +99,8 @@ public class AdminController {
     @DeleteMapping("/rating/delete/{ratingId}")
     public ResponseEntity<ResponseData<RatingResponseModel>>  delete(@PathVariable Long ratingId){return ResponseEntity.ok(ratingService.deleteRatingByAdmin(ratingId));}
 
+    @PostMapping("/create-quotation/{oderId}")
+    public ResponseEntity<ResponseData<QuotationDto>> createQuo(@RequestBody QuotationForm form, @PathVariable Long orderId){
+        return ResponseEntity.ok(quotationService.newQuo(form, orderId));
+    }
 }
