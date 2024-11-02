@@ -17,6 +17,8 @@ public class OrderForm {
     private String designDetails;
     @NotBlank
     private Order.ServiceType serviceType; // e.g., "Cleaning", "Maintenance", etc.
+
+    private String userPhone;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate startDate;
     @NotBlank
