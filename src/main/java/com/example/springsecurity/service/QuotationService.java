@@ -7,7 +7,7 @@ import com.example.springsecurity.model.payload.response.ResponseData;
 import java.util.List;
 
 public interface QuotationService {
-    ResponseData<QuotationDto> newQuo(QuotationForm quotationForm);
+    ResponseData<QuotationDto> newQuo(QuotationForm quotationForm, Long orderId);
 
     ResponseData<List<QuotationDto>> getListQuoByUser();
     ResponseData<QuotationDto> approveQuotation(Long quoId);

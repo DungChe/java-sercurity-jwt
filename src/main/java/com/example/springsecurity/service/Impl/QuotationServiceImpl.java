@@ -1,11 +1,13 @@
 package com.example.springsecurity.service.Impl;
 
 import com.example.springsecurity.model.dto.QuotationDto;
+import com.example.springsecurity.model.entity.Order;
 import com.example.springsecurity.model.entity.Quotation;
 import com.example.springsecurity.model.entity.User; // Nhập khẩu lớp User
 import com.example.springsecurity.model.payload.request.QuotationForm;
 import com.example.springsecurity.model.payload.response.ResponseData;
 import com.example.springsecurity.model.payload.response.ResponseError;
+import com.example.springsecurity.repository.OrderRepository;
 import com.example.springsecurity.repository.QuotationRepository;
 import com.example.springsecurity.repository.UserRepository; // Nhập khẩu lớp UserRepository
 import com.example.springsecurity.service.QuotationService;
@@ -29,26 +31,30 @@ public class QuotationServiceImpl implements QuotationService {
 
     @Autowired
     private UserRepository userRepository; // Khai báo UserRepository
+    @Autowired
+    private OrderRepository orderRepository;
 
     @Override
-    public ResponseData<QuotationDto> newQuo(QuotationForm form) {
+    public ResponseData<QuotationDto> newQuo(QuotationForm form, Long orderId) {
         log.info("Creating a new quotation ....");
         Quotation quo = new Quotation();
 
-        // Tìm người dùng dựa trên email
-        Optional<User> userOptional = userRepository.findByEmail(form.getEmail());
-        if (userOptional.isPresent()) {
-            quo.setUser(userOptional.get()); // Gán người dùng vào báo giá
-        } else {
-            // Xử lý khi không tìm thấy người dùng
-            return new ResponseData<>(404, "User not found", null);
-        }
+        // tim don hang theo orderID
+        Order currentOrder = orderRepository.findById(orderId).orElse(null);
+        if (currentOrder == null ) return new ResponseData<>(404, "Order not found", null);
+
+        // Tìm người dùng
+        User currentUser = currentOrder.getUser();
+
         quo.setQuotationNumber(UUID.randomUUID().toString().substring(0,8).toUpperCase()); // Mã đơn hàng
-        quo.setCustomerName(form.getCustomerName()); // Tên khách hàng
-        quo.setPhoneNumber(form.getPhoneNumber()); // Số điện thoại
-        quo.setEmail(form.getEmail()); // Email
-        quo.setAddress(form.getAddress()); // Địa chỉ
-        quo.setServiceType(form.getServiceType()); // Loại dịch vụ
+//        quo.setCustomerName(form.getCustomerName()); // Tên khách hàng
+//        quo.setPhoneNumber(form.getPhoneNumber()); // Số điện thoại
+//        quo.setEmail(form.getEmail()); // Email
+//        quo.setAddress(form.getAddress()); // Địa chỉ
+//        quo.setServiceType(form.getServiceType()); // Loại dịch vụ
+        quo.setOrder(currentOrder); // them order
+        quo.setUser(currentUser); // add them user vao quo
+
         quo.setLocation(form.getLocation());
         quo.setAreaSize(form.getAreaSize()); // Diện tích
         quo.setDesignDetails(form.getDesignDetails()); // Chi tiết thiết kế

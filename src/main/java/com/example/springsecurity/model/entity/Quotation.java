@@ -27,20 +27,23 @@ public class Quotation {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(nullable = false)
-    private String customerName; // Tên của người đặt
-
-    @Column(nullable = false)
-    private String phoneNumber; // Số điện thoại
-
-    @Column(nullable = false)
-    private String email; // Email
-
-    @Column(nullable = false)
-    private String address; // Địa chỉ thi công
-
-    @Column(nullable = false)
-    private String serviceType; // Loại dịch vụ (ví dụ: Thiết kế, Thi công, Bảo dưỡng, v.v.)
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "order_id", referencedColumnName = "orderId")
+    private Order order;
+//    @Column(nullable = false)
+//    private String customerName; // Tên của người đặt
+//
+//    @Column(nullable = false)
+//    private String phoneNumber; // Số điện thoại
+//
+//    @Column(nullable = false)
+//    private String email; // Email
+//
+//    @Column(nullable = false)
+//    private String address; // Địa chỉ thi công
+//
+//    @Column(nullable = false)
+//    private String serviceType; // Loại dịch vụ (ví dụ: Thiết kế, Thi công, Bảo dưỡng, v.v.)
 
     @Column(nullable = false)
     private double areaSize; // Diện tích thi công (m2)

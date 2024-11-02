@@ -13,21 +13,21 @@ import java.time.LocalDate;
 public class QuotationForm {
 
     @NotBlank(message = "Customer name is required")
-    private String customerName; // Tên khách hàng
+//    private String customerName; // Tên khách hàng
 
-    @NotBlank(message = "Phone number is required")
-    @Size(min = 10, max = 15, message = "Phone number must be between 10 and 15 digits")
-    private String phoneNumber; // Số điện thoại
-
-    @NotBlank(message = "Email is required")
-    @Email(message = "Email should be valid")
-    private String email; // Email
-
-    @NotBlank(message = "Address is required")
-    private String address; // Địa chỉ thi công
-
-    @NotBlank(message = "Service type is required")
-    private String serviceType; // Loại dịch vụ (Thiết kế, Thi công, Bảo dưỡng, v.v.)
+//    @NotBlank(message = "Phone number is required")
+//    @Size(min = 10, max = 15, message = "Phone number must be between 10 and 15 digits")
+//    private String phoneNumber; // Số điện thoại
+//
+//    @NotBlank(message = "Email is required")
+//    @Email(message = "Email should be valid")
+//    private String email; // Email
+//
+//    @NotBlank(message = "Address is required")
+//    private String address; // Địa chỉ thi công
+//
+//    @NotBlank(message = "Service type is required")
+//    private String serviceType; // Loại dịch vụ (Thiết kế, Thi công, Bảo dưỡng, v.v.)
 
     @NotNull(message = "Area size is required")
     private Double areaSize; // Diện tích thi công (m2)
