@@ -43,6 +43,7 @@ public class OrderServiceImpl implements OrderService {
         order.setDesignDetails(orderForm.getDesignDetails());
         order.setOrderNumber(UUID.randomUUID().toString().substring(0, 8).toUpperCase());
         order.setServiceType(orderForm.getServiceType());
+        order.setPhone(orderForm.getUserPhone());
         order.setStartDate(orderForm.getStartDate());
         order.setEndDate(orderForm.getEndDate());
         order.setAddress(orderForm.getAddress());
