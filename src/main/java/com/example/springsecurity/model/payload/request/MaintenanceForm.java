@@ -6,7 +6,6 @@ import java.time.LocalDate;
 
 @Data
 public class MaintenanceForm {
-    private String serviceType;
     private String price;
     private String constructionStaff;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")

@@ -46,9 +46,7 @@ public class MaintenaceServiceImpl implements MaintenaceService {
 
         Maintenance mt = new Maintenance();
         mt.setTitle("Hoa don bao tri");
-        mt.setNumberOrder(order.getOrderNumber());
         mt.setUser(order.getUser());
-        mt.setServiceType(form.getServiceType());
         mt.setPrice(form.getPrice());
         mt.setConstructionStaff(form.getConstructionStaff());
         mt.setStartDate(LocalDate.now());
@@ -74,7 +72,6 @@ public class MaintenaceServiceImpl implements MaintenaceService {
         Maintenance mt = maintenaceRepository.findById(id).orElse(null);
         if( mt == null ) return new  ResponseError<>(200,"Bill Maintenance not found");
 
-        mt.setServiceType(form.getServiceType());
         mt.setPrice(form.getPrice());
         mt.setEndDate(form.getEndDate());
         mt.setContent(form.getContent());

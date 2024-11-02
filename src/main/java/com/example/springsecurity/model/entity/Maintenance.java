@@ -18,13 +18,13 @@ import java.time.LocalDate;
 @Table( name = "maintence")
 public class Maintenance {
     private String title;    // tieu de
-
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY)
     private Long maintenanceID;
+    @OneToOne
+    @JoinColumn( name = "order_id")
+    private Order order;
     private String price;
-    private String numberOrder;
-    private String serviceType;
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;

@@ -12,8 +12,6 @@ import java.time.LocalDate;
 public class MaintenanceDto {
     private String title;
     private Long maintenanceID;
-    private String numberOrder;
-    private String serviceType;
     private String price;
     private Long userId;
     private String constructionStaff;
@@ -25,8 +23,6 @@ public class MaintenanceDto {
         return MaintenanceDto.builder()
                 .title(maintenance.getTitle())
                 .maintenanceID(maintenance.getMaintenanceID())
-                .numberOrder(maintenance.getNumberOrder())
-                .serviceType(maintenance.getServiceType())
                 .price(maintenance.getPrice())
                 .userId(maintenance.getUser().getId())
                 .constructionStaff(maintenance.getConstructionStaff())
