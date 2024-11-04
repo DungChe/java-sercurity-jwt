@@ -32,7 +32,7 @@ public class QuotationServiceImpl implements QuotationService {
     @Autowired
     private UserRepository userRepository; // Khai báo UserRepository
     @Autowired
-    private OrderRepository orderRepository;
+    private OrderRepository orderRepository;    
 
     @Override
     public ResponseData<QuotationDto> newQuo(QuotationForm form, Long orderId) {
