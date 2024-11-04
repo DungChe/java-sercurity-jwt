@@ -1,5 +1,6 @@
 package com.example.springsecurity.security;
 
+import com.example.springsecurity.service.BlacklistTokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,6 +19,7 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final BlacklistTokenService blacklistTokenService;
 
     @Override
     protected void doFilterInternal(
@@ -26,11 +28,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
         // Lấy JWT từ request.
-        String jwt = jwtTokenProvider.getJwtFromRequest(request);
+        String token = jwtTokenProvider.getJwtFromRequest(request);
 
         // Nếu JWT không null và hợp lệ
-        if (jwt != null && jwtTokenProvider.validateAccessToken(jwt)) {
-            Authentication auth = jwtTokenProvider.createAuthentication(jwt);
+        if (token != null && jwtTokenProvider.validateAccessToken(token)) {
+            // Kiem tra token nay da dang xuat va nam trong entity blacklist chưa
+            if (blacklistTokenService.isTokenBlacklisted(token)) {
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token has been blacklisted");
+                return;
+            }
+            Authentication auth = jwtTokenProvider.createAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(auth);
         }
 
