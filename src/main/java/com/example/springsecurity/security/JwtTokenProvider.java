@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
+import java.util.Date;
 
 @Component
 @RequiredArgsConstructor
@@ -98,4 +99,10 @@ public class JwtTokenProvider {
                 userDetails.getAuthorities()
         );
     }
+
+    public Date getExpiryDateFromToken(String token) {
+        DecodedJWT jwt = JWT.decode(token);
+        return jwt.getExpiresAt(); // Lấy ngày hết hạn từ token
+    }
+
 }
