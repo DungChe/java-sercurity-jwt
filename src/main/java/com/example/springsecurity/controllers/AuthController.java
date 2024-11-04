@@ -6,6 +6,8 @@ import com.example.springsecurity.model.payload.response.ResponseError;
 import com.example.springsecurity.model.payload.request.SignInForm;
 import com.example.springsecurity.model.payload.request.SignUpForm;
 import com.example.springsecurity.service.AuthService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +36,10 @@ public class AuthController {
 
     public ResponseEntity refreshToken(@RequestHeader("X-Refresh-Token") String refreshToken){return ResponseEntity.ok(authService.refreshJWT(refreshToken));}
 
+    @PostMapping("/logout")
+    public ResponseEntity<ResponseData<String>> logout(HttpServletRequest request, HttpServletResponse response) {
+        return ResponseEntity.ok(authService.logout(request, response));
+    }
 
     @GetMapping("/confirm/{userId}")
     public ResponseData<String> confirm(@Min(1) @PathVariable Long userId, @RequestBody OTPForm otpForm) {

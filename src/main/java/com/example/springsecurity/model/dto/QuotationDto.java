@@ -19,6 +19,7 @@ public class QuotationDto {
     private double areaSize; // Diện tích
     private String location; //
     private String designDetails;
+    // bigDecimal
     private double materialCost;       // Chi phí vật liệu dưới dạng double
     private double laborCost;           // Chi phí nhân công dưới dạng double
     private double transportationCost;   // Chi phí vận chuyển dưới dạng double
