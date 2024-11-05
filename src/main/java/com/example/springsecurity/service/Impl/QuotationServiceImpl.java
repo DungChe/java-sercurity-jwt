@@ -117,7 +117,7 @@ public class QuotationServiceImpl implements QuotationService {
 
          quotationRepository.save(currentQuo);
         QuotationDto data = QuotationDto.toDto(currentQuo);
-        return new ResponseData<>(200,"successfully APPROVED",data);
+        return new ResponseData<>(200,"successfully "+ form.getPaymentMethod(),data);
     }
 
     @Override
