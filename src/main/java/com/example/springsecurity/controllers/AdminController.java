@@ -4,10 +4,7 @@ import com.example.springsecurity.model.dto.OrderDto;
 import com.example.springsecurity.model.dto.QuotationDto;
 import com.example.springsecurity.model.dto.RatingResponseModel;
 import com.example.springsecurity.model.dto.UserDto;
-import com.example.springsecurity.model.payload.request.ChangeStatusOrderForm;
-import com.example.springsecurity.model.payload.request.OrderForm;
-import com.example.springsecurity.model.payload.request.QuotationForm;
-import com.example.springsecurity.model.payload.request.UserForm;
+import com.example.springsecurity.model.payload.request.*;
 import com.example.springsecurity.model.payload.response.ResponseData;
 import com.example.springsecurity.repository.UserRepository;
 import com.example.springsecurity.service.OrderService;
@@ -62,6 +59,12 @@ public class AdminController {
     public ResponseEntity<ResponseData<UserDto>> getUserById(@PathVariable Long id) {
         ResponseData<UserDto> user = userService.getById(id);
         return ResponseEntity.ok(user);
+    }
+
+    // CẤP QUYỀN
+    @PatchMapping("/users/set-role/{id}")
+    public ResponseEntity<ResponseData<Void>> setRoleUser(@PathVariable Long id, @RequestBody SetRoleForm form){
+        return ResponseEntity.ok(userService.setRole(id, form));
     }
 
     // XEM TẤT CẢ ĐƠN HÀNG
