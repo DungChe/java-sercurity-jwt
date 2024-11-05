@@ -1,6 +1,7 @@
 package com.example.springsecurity.controllers;
 
 import com.example.springsecurity.model.dto.QuotationDto;
+import com.example.springsecurity.model.payload.request.ConfirmAndChoosePaymentQuoForm;
 import com.example.springsecurity.model.payload.request.QuotationForm;
 import com.example.springsecurity.model.payload.response.ResponseData;
 import com.example.springsecurity.service.QuotationService;
@@ -24,9 +25,9 @@ public class QuoController {
         return ResponseEntity.ok(quotationService.getListQuoByUser());
     }
 
-    @PatchMapping("/quotations/my-quo/approve/{quoId}")
-    public ResponseEntity<ResponseData<QuotationDto>> approveQuo(@PathVariable Long quoId){
-        return ResponseEntity.ok(quotationService.approveQuotation(quoId));
+    @PostMapping("/quotations/my-quo/approve/{quoId}")
+    public ResponseEntity<ResponseData<QuotationDto>> approveQuo(@PathVariable Long quoId,@RequestBody ConfirmAndChoosePaymentQuoForm form){
+        return ResponseEntity.ok(quotationService.approveQuotation(quoId, form));
     }
 
     @PatchMapping("/quotations/my-quo/reject/{quoId}")
