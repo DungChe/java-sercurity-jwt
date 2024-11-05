@@ -2,11 +2,14 @@ package com.example.springsecurity.service.Impl;
 
 import com.example.springsecurity.model.dto.UserBasic;
 import com.example.springsecurity.model.dto.UserDto;
+import com.example.springsecurity.model.entity.Role;
 import com.example.springsecurity.model.entity.User;
 import com.example.springsecurity.model.payload.request.ChangePasswordForm;
+import com.example.springsecurity.model.payload.request.SetRoleForm;
 import com.example.springsecurity.model.payload.request.UserForm;
 import com.example.springsecurity.model.payload.response.ResponseData;
 import com.example.springsecurity.model.payload.response.ResponseError;
+import com.example.springsecurity.repository.RoleRepository;
 import com.example.springsecurity.repository.UserRepository;
 import com.example.springsecurity.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +29,8 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private RoleRepository roleRepository;
 
     @Override
     public ResponseData<List<UserDto>> getAll() {
@@ -110,5 +115,18 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         UserDto userDto = UserDto.to(user); // Sử dụng UserDto.to(user)
         return new ResponseData<>(200, "User retrieved successfully", userDto);
+    }
+
+    @Override
+    public ResponseData<Void> setRole(Long userId, SetRoleForm form){
+        User user = userRepository.findById(userId).orElse(null);
+        if(user == null){ return new ResponseError<>(400,"user not found with ID :"+ userId);}
+
+        Role role = roleRepository.findById(form.getRoleId()).orElse(null);
+        if(role == null){ return new ResponseError<>(400,"role not found with ID :"+ form.getRoleId());}
+
+        user.setRole(role); userRepository.save(user); String mesage = String.format("Change role with ID %s succesfully", role.getRoleId());
+
+        return new ResponseData<>(200,mesage ,null);
     }
 }
