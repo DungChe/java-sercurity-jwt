@@ -49,9 +49,6 @@ public class QuotationForm {
     @NotNull(message = "Total cost is required")
     private Double totalCost; // Tổng chi phí
 
-    @NotBlank(message = "Payment method is required")
-    private String paymentMethod; // Phương thức thanh toán (Tiền mặt, chuyển khoản, thẻ tín dụng, v.v.)
-
     @NotNull(message = "Quotation date is required")
     @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate quotationDate; // Ngày lập báo giá
