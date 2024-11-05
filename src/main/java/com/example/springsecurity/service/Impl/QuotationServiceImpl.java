@@ -4,6 +4,7 @@ import com.example.springsecurity.model.dto.QuotationDto;
 import com.example.springsecurity.model.entity.Order;
 import com.example.springsecurity.model.entity.Quotation;
 import com.example.springsecurity.model.entity.User; // Nhập khẩu lớp User
+import com.example.springsecurity.model.payload.request.ConfirmAndChoosePaymentQuoForm;
 import com.example.springsecurity.model.payload.request.QuotationForm;
 import com.example.springsecurity.model.payload.response.ResponseData;
 import com.example.springsecurity.model.payload.response.ResponseError;
@@ -52,6 +53,7 @@ public class QuotationServiceImpl implements QuotationService {
 //        quo.setEmail(form.getEmail()); // Email
 //        quo.setAddress(form.getAddress()); // Địa chỉ
 //        quo.setServiceType(form.getServiceType()); // Loại dịch vụ
+        quo.setPaymentMethod(Quotation.PaymentMethod.CREDIT_CARD); // Phương thức thanh toán mặc định vì not null nên ko truyền null đc
         quo.setOrder(currentOrder); // them order
         quo.setUser(currentUser); // add them user vao quo
 
@@ -62,7 +64,6 @@ public class QuotationServiceImpl implements QuotationService {
         quo.setLaborCost(form.getLaborCost()); // Chi phí nhân công
         quo.setTransportationCost(form.getTransportationCost()); // Chi phí vận chuyển
         quo.setTotalCost(form.getTotalCost()); // Tổng chi phí
-        quo.setPaymentMethod(Quotation.PaymentMethod.valueOf(form.getPaymentMethod().toUpperCase())); // Phương thức thanh toán
         quo.setQuotationDate(form.getQuotationDate()); // Ngày lập báo giá
         quo.setExpirationDate(form.getExpirationDate()); // Ngày hết hạn của báo giá
         quo.setStatus(Quotation.Status.PENDING); // Trạng thái báo giá mặc định là PENDING
@@ -98,7 +99,7 @@ public class QuotationServiceImpl implements QuotationService {
     }
 
     @Override
-    public ResponseData<QuotationDto> approveQuotation(Long quoId){
+    public ResponseData<QuotationDto> approveQuotation(Long quoId, ConfirmAndChoosePaymentQuoForm form){
         log.info("Accepting quotation with quoId "+ quoId);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String email = auth.getName();;
@@ -111,11 +112,12 @@ public class QuotationServiceImpl implements QuotationService {
         if (currentQuo == null) {return new ResponseData<>(404, "Quotation not found", null);}
 
          // Nếu tồn tại quo
-         currentQuo.setStatus(Quotation.Status.APPROVED);
+         currentQuo.setStatus(form.getStatus());
+        currentQuo.setPaymentMethod(form.getPaymentMethod());
 
          quotationRepository.save(currentQuo);
-
-        return new ResponseData<>(200,"successfully APPROVED",null);
+        QuotationDto data = QuotationDto.toDto(currentQuo);
+        return new ResponseData<>(200,"successfully APPROVED",data);
     }
 
     @Override
