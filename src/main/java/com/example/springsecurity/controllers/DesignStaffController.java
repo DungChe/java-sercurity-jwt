@@ -28,13 +28,13 @@ public class DesignStaffController {
 
     // TẠO HỒ SƠ THIẾT KẾ BẢN VẼ
     @PostMapping("/create/{customerId}")
-    public ResponseEntity<ResponseData<DesignRecordDto>> createDesignRecord(@RequestBody DesignRecordForm form, @PathVariable Long customerId) {
+    public ResponseEntity<ResponseData<DesignRecordDto>> createDesignRecord(@ModelAttribute DesignRecordForm form, @PathVariable Long customerId) {
         return ResponseEntity.ok(designRecordService.createDesignCord(form, customerId));
     }
 
     // CẬP NHẬT BẢN VẼ HOẶC GHI CHÚ MỚI
     @PutMapping("/update/{recordId}")
-    public ResponseEntity<ResponseData<DesignRecordDto>> updateDesignRecord(@PathVariable Long recordId, @RequestBody DesignRecordForm form) {
+    public ResponseEntity<ResponseData<DesignRecordDto>> updateDesignRecord(@PathVariable Long recordId, @ModelAttribute DesignRecordForm form) {
         return ResponseEntity.ok(designRecordService.updateDesignRecord(recordId, form));
     }
 
