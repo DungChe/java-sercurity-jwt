@@ -16,8 +16,9 @@ public interface OrderService {
     ResponseData<OrderDto> updateOrderForUser(Long orderId, OrderForm orderForm);  // Người dùng cập nhật đơn hàng của mình
     ResponseData<String> cancelOrder(Long orderId);  // Hủy đơn hàng
     ResponseData<List<OrderDto>> getMyOrder();  // Lấy đơn hàng của người dùng hiện tại
-
     ResponseData<OrderDto> getOrderDetailsForAdmin(Long orderId);  // Admin xem chi tiết đơn hàng
     ResponseData<OrderDto> getOrderDetailsForUser(Long orderId);  // Người dùng hiện tại xem chi tiết đơn hàng của họ
 
+    // Lay tat ca don hang dang trong qua trinh xay dung cho design thiet ke
+    ResponseData<List<OrderDto>> getAllOrderInProgress();
 }

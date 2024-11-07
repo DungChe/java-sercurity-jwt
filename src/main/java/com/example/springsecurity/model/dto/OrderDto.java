@@ -16,6 +16,7 @@ import java.time.LocalDate;
 public class OrderDto {
     private String title;
     private Long orderId;
+    private Long userId;
     private String orderNumber;
     private String userPhone;
     private String designDetails;
@@ -30,6 +31,7 @@ public class OrderDto {
         return OrderDto.builder()
                 .title(order.getTitle())
                 .orderId(order.getOrderId())
+                .userId(order.getUser().getUserId())
                 .orderNumber(order.getOrderNumber())
                 .userPhone(order.getPhone())
                 .designDetails(order.getDesignDetails())

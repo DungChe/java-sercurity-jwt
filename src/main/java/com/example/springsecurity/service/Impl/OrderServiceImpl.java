@@ -77,15 +77,18 @@ public class OrderServiceImpl implements OrderService {
             return new ResponseError<>(404, "Order does not exist");
         }
 
-        Authentication currentUser = SecurityContextHolder.getContext().getAuthentication();
-        String email = currentUser.getName();
-
-        if (!existOrder.getStatus().equals(Order.Status.CANCELED)) {
-            existOrder.setStatus(form.getStatus());
+        // Kiểm tra xem status từ form có phải là một giá trị hợp lệ của enum Status không
+        try {
+            Order.Status newStatus = Order.Status.valueOf(form.getStatus().toUpperCase());
+            // Nếu trạng thái là hợp lệ, thay đổi trạng thái đơn hàng
+            existOrder.setStatus(newStatus);
             orderRepository.save(existOrder);
+        } catch (IllegalArgumentException e) {
+            return new ResponseError<>(400, "Invalid status value");
         }
         return new ResponseData<>(200, "Change status successfully");
     }
+
 
     @Override
     public ResponseData<String> cancelOrder(Long orderId) {
@@ -196,5 +199,19 @@ public class OrderServiceImpl implements OrderService {
         }
 
         return new ResponseData<>(200, "Order details retrieved successfully", OrderDto.from(order));
+    }
+
+    @Override
+    public ResponseData<List<OrderDto>> getAllOrderInProgress() {
+        List<Order> inProgressOrders = orderRepository.findByStatus(Order.Status.INPROGRESS);
+        if (inProgressOrders.isEmpty()) {
+            return new ResponseError<>(404, "No orders in progress");
+        }
+
+        List<OrderDto> orderDtos = inProgressOrders.stream()
+                .map(OrderDto::from)
+                .collect(Collectors.toList());
+
+        return new ResponseData<>(200, "Orders in progress retrieved successfully", orderDtos);
     }
 }

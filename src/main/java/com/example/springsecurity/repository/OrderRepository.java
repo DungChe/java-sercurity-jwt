@@ -13,9 +13,10 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findByUser(User user);
 
     boolean existsByUser(User user); // Kiểm tra sự tồn tại của order dựa trên user
-
 //    boolean existsCanceled ("CANCELED");
     Optional<Order> findByOrderIdAndUserId(Long orderId, Long userId);
 
     Optional<Order> findById(Long orderId); // Truy vấn theo orderId
+    // KIEM TRA DON HANG NAO DA DC CHAP NHAN BAO GIA VA TIEN HANG THI CONG (INPROGRESS)
+    List<Order> findByStatus(Order.Status status);
 }
