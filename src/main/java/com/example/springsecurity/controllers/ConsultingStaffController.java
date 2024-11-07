@@ -3,6 +3,7 @@ package com.example.springsecurity.controllers;
 import com.example.springsecurity.model.dto.MaintenanceDto;
 import com.example.springsecurity.model.dto.OrderDto;
 import com.example.springsecurity.model.dto.QuotationDto;
+import com.example.springsecurity.model.payload.request.ChangeStatusOrderForm;
 import com.example.springsecurity.model.payload.request.MaintenanceForm;
 import com.example.springsecurity.model.payload.request.QuotationForm;
 import com.example.springsecurity.model.payload.response.ResponseData;
@@ -38,6 +39,13 @@ public class ConsultingStaffController {
     public ResponseEntity<ResponseData<OrderDto>> getOrderDetailsForAdmin(@PathVariable Long orderId) {
         ResponseData<OrderDto> order = orderService.getOrderDetailsForAdmin(orderId);
         return ResponseEntity.ok(order);
+    }
+
+    // THAY ĐỔI TRẠNG THÁI ĐƠN HÀNG
+    @PatchMapping("/orders/change-status/{orderId}")
+    public ResponseEntity<ResponseData<String>> changeStatusOrder(@PathVariable Long orderId, @RequestBody ChangeStatusOrderForm form) {
+        ResponseData<String> response = orderService.changeStatusOrder(orderId, form);
+        return ResponseEntity.ok(response);
     }
 
     // LẬP BẢNG BÁO GIÁ ( QUOTATIONS )
