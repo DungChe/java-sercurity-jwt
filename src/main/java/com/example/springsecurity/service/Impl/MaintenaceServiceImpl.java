@@ -1,6 +1,7 @@
 package com.example.springsecurity.service.Impl;
 
 import com.example.springsecurity.model.dto.MaintenanceDto;
+import com.example.springsecurity.model.dto.OrderDto;
 import com.example.springsecurity.model.entity.Maintenance;
 import com.example.springsecurity.model.entity.Order;
 import com.example.springsecurity.model.entity.User;
@@ -60,12 +61,19 @@ public class MaintenaceServiceImpl implements MaintenaceService {
     }
 
     @Override
-    public ResponseData<List<MaintenanceDto>> getAll(){
-        List<MaintenanceDto> orders = maintenaceRepository.findAll().stream()
-                .map(MaintenanceDto::toDto)
+    public ResponseData<List<OrderDto>> getAll() {
+        // Filter the data to only include orders with ServiceType MAINTENANCE
+        List<OrderDto> orders = orderRepository.findAll().stream()
+                .filter(order -> order.getServiceType() == Order.ServiceType.MAINTENANCE)  // Filter for MAINTENANCE
+                .map(OrderDto::from)  // Convert to OrderDto
                 .collect(Collectors.toList());
-        return new ResponseData<>(200, "List maintain retrieved successfully", orders);
+
+        return new ResponseData<>(200, "List of maintenance orders retrieved successfully", orders);
     }
+
+
+
+
     @Override
     public ResponseData<MaintenanceDto> change(Long id, MaintenanceForm form){
 

@@ -2,9 +2,12 @@ package com.example.springsecurity.controllers;
 
 import com.example.springsecurity.model.dto.DesignRecordDto;
 import com.example.springsecurity.model.dto.MaintenanceDto;
+import com.example.springsecurity.model.dto.OrderDto;
 import com.example.springsecurity.model.payload.request.MaintenanceForm;
 import com.example.springsecurity.model.payload.response.ResponseData;
+import com.example.springsecurity.service.Impl.OrderServiceImpl;
 import com.example.springsecurity.service.MaintenaceService;
+import com.example.springsecurity.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 
@@ -17,6 +20,8 @@ import java.util.List;
 public class MaintenaceController {
     @Autowired
     private MaintenaceService maintenaceService;
+    @Autowired
+    private OrderService orderService;
 
     // TAO HOA DON BAO TRI
     @PostMapping("/maintenace/create/{orderId}")
@@ -25,8 +30,8 @@ public class MaintenaceController {
 
     // LAY DANH SACH HOA DON BAO TRi
     @GetMapping("/maintenace")
-    public ResponseEntity<ResponseData<List<MaintenanceDto>>>  getAll(){
-        return ResponseEntity.ok(maintenaceService.getAll());
+    public ResponseEntity<ResponseData<List<OrderDto>>>  getAll(){
+        return ResponseEntity.ok(orderService.getAll());
     }
 
     // (them moi) Chinh sua hoa don bao tri
