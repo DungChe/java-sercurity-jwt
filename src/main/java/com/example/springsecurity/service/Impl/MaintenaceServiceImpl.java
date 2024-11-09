@@ -18,8 +18,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -61,7 +63,7 @@ public class MaintenaceServiceImpl implements MaintenaceService {
     }
 
     @Override
-    public ResponseData<List<OrderDto>> getAll() {
+    public ResponseData<List<OrderDto>> getAllOrderMaintenance() {
         // Filter the data to only include orders with ServiceType MAINTENANCE
         List<OrderDto> orders = orderRepository.findAll().stream()
                 .filter(order -> order.getServiceType() == Order.ServiceType.MAINTENANCE)  // Filter for MAINTENANCE
@@ -70,9 +72,6 @@ public class MaintenaceServiceImpl implements MaintenaceService {
 
         return new ResponseData<>(200, "List of maintenance orders retrieved successfully", orders);
     }
-
-
-
 
     @Override
     public ResponseData<MaintenanceDto> change(Long id, MaintenanceForm form){
@@ -86,6 +85,32 @@ public class MaintenaceServiceImpl implements MaintenaceService {
         mt.setConstructionStaff(mt.getConstructionStaff());
         return new ResponseData<>(200, "Change buill succesfully", null);
 
+    }
+
+    @Override
+    public ResponseData<List<MaintenanceDto>> userGetMaintenance(Principal principal) {
+        String email = principal.getName(); // Lấy tên người dùng từ Principal
+        User user = userRepository.findByEmail(email).orElse(null);
+        if (user == null ){ return new ResponseError<>(400,"User not found");}
+
+        // Truy vấn User để lấy userId
+        Long userId = user.getUserId();
+
+        List<MaintenanceDto> maintenanceList = maintenaceRepository.findByUserId(userId).stream()
+                .map(MaintenanceDto::toDto)
+                .collect(Collectors.toList());
+
+        return new ResponseData<>(200, "Lấy thành công danh sách hóa đơn bảo trì", maintenanceList);
+    }
+
+    @Override
+    public ResponseData<MaintenanceDto> getMaintenanceById(Long id) {
+        // Tìm Maintenance theo ID
+        Maintenance maintenance = maintenaceRepository.findById(id).orElse(null);
+
+        if (maintenance == null) {return new ResponseError<>(404, "Maintenance bill not found");}
+
+        return new ResponseData<>(200, "Maintenance details retrieved successfully", MaintenanceDto.toDto(maintenance));
     }
 
 }
