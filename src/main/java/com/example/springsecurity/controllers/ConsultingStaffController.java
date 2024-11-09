@@ -55,9 +55,23 @@ public class ConsultingStaffController {
     }
 
     // LẬP HÓA ĐƠN BẢO TRÌ ( MAINTENACE )
-    @PostMapping("/create-maintenace/{orderId}")
+    @PostMapping("/create-maintenance/{orderId}")
     public ResponseEntity<ResponseData<MaintenanceDto>> createMaintenance( @RequestBody MaintenanceForm form, @PathVariable Long orderId){
         return ResponseEntity.ok(maintenaceService.createMaintenance(form, orderId));}
+    // QUAN LI BAO TRI
+    @GetMapping("/maintenance")
+    public ResponseEntity<ResponseData<List<OrderDto>>>  getAllOrderMaintenance(){
+        return ResponseEntity.ok(maintenaceService.getAllOrderMaintenance());
+    }
+    // (them moi) Chinh sua hoa don bao tri
+    @PutMapping("/maintenance/update/{maintenanceId}")
+    public ResponseEntity<ResponseData<MaintenanceDto>> updateRecord(@PathVariable Long maintenanceId, @RequestBody MaintenanceForm form){
+        return ResponseEntity.ok(maintenaceService.change(maintenanceId,form));
+    }
 
-
+    // xem chi tiet hoa don bao tri theo ID
+    @GetMapping("/maintenance/{id}")
+    public ResponseEntity<ResponseData<MaintenanceDto>> getMaintenanceById(@PathVariable Long id){
+        return ResponseEntity.ok(maintenaceService.getMaintenanceById(id));
+    }
 }
