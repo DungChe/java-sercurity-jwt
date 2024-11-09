@@ -12,32 +12,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 
 import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
 import java.util.List;
 
 
 @RestController
-@RequestMapping("/api/v1/consulting-staff") // Nhan vien tu van
+@RequestMapping("/api/v1/users") // Nhan vien tu van
 public class MaintenaceController {
     @Autowired
     private MaintenaceService maintenaceService;
-    @Autowired
-    private OrderService orderService;
 
-    // TAO HOA DON BAO TRI
-    @PostMapping("/maintenace/create/{orderId}")
-    public ResponseEntity<ResponseData<MaintenanceDto>> create(MaintenanceForm form, @PathVariable Long orderId){
-        return ResponseEntity.ok(maintenaceService.createMaintenance(form, orderId));}
-
-    // LAY DANH SACH HOA DON BAO TRi
-    @GetMapping("/maintenace")
-    public ResponseEntity<ResponseData<List<OrderDto>>>  getAll(){
-        return ResponseEntity.ok(orderService.getAll());
+    // Bao tri
+    @GetMapping("/my-maintenance")
+    public ResponseEntity<ResponseData<List<MaintenanceDto>>> userGetMyMaintenance(Principal principal) {
+        return ResponseEntity.ok(maintenaceService.userGetMaintenance(principal));
     }
 
-    // (them moi) Chinh sua hoa don bao tri
-    @PutMapping("/maintenace/update/{maintenanceId}")
-    public ResponseEntity<ResponseData<MaintenanceDto>> updateRecord(@PathVariable Long maintenanceId, @RequestBody MaintenanceForm form){
-        return ResponseEntity.ok(maintenaceService.change(maintenanceId,form));
-    }
 
 }
