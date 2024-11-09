@@ -17,9 +17,11 @@ public class OrderDto {
     private String title;
     private Long orderId;
     private Long userId;
+    private String userName;
     private String orderNumber;
     private String userPhone;
     private String designDetails;
+    private String address;
     private Order.ServiceType serviceType;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate startDate;
@@ -31,6 +33,7 @@ public class OrderDto {
         return OrderDto.builder()
                 .title(order.getTitle())
                 .orderId(order.getOrderId())
+                .userName(order.getUser().getUsername())
                 .userId(order.getUser().getUserId())
                 .orderNumber(order.getOrderNumber())
                 .userPhone(order.getPhone())
@@ -38,6 +41,7 @@ public class OrderDto {
                 .serviceType(order.getServiceType())
                 .startDate(order.getStartDate())
                 .endDate(order.getEndDate())
+                .address(order.getAddress())
                 .status(order.getStatus().toString())
                 .build();
     }

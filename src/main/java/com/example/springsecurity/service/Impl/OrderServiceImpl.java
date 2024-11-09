@@ -37,6 +37,7 @@ public class OrderServiceImpl implements OrderService {
         if (currentUser == null) {
             return new ResponseError<>(400, "User not found with email: " + email);
         }
+//        String name = currentUser.getUsername();
 
         Order order = new Order();
         order.setTitle("Thông tin đơn hàng");
