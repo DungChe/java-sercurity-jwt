@@ -1,11 +1,11 @@
 package com.example.springsecurity.controllers;
 
-import com.example.springsecurity.model.dto.QuotationDto;
+import com.example.springsecurity.model.dto.MaintenanceDto;
 import com.example.springsecurity.model.dto.UserBasic;
 import com.example.springsecurity.model.payload.request.ChangePasswordForm;
 import com.example.springsecurity.model.payload.request.UserForm;
 import com.example.springsecurity.model.payload.response.ResponseData;
-import com.example.springsecurity.service.QuotationService;
+import com.example.springsecurity.service.MaintenaceService;
 import com.example.springsecurity.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +14,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -22,6 +23,8 @@ import java.security.Principal;
 public class UserController {
 
     private final UserService userService;
+    private final MaintenaceService maintenaceService;
+
     // Cập nhật thông tin cá nhân
     @PutMapping("/update/me")
     public ResponseEntity<ResponseData<String> > updateCurrentUser(@RequestBody UserForm form, Principal principal) {return ResponseEntity.ok(userService.updateMe(principal, form));
@@ -36,5 +39,6 @@ public class UserController {
     @GetMapping("/me")
     public ResponseEntity<ResponseData<UserBasic> > getCurrentUser(Principal principal) {return ResponseEntity.ok(userService.getMe(principal));
     }
+
 
 }
